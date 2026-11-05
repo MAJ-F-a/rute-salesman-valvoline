@@ -850,7 +850,7 @@ const geoUrl = g => 'https://www.google.com/maps/search/?api=1&query=' + encodeU
 function renderAl(tr){
   const a = tr.dataset.a || '', td = tr.querySelector('.al');
   td.innerHTML = a.startsWith('geo:')
-    ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl(a))+'">📍 Buka Google Maps</a> <button type="button" class="mini" data-x="1" aria-label="Hapus lokasi">×</button>'
+    ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl(a))+'">📍 Buka Google Maps</a>'+(tr.dataset.lock ? '' : ' <button type="button" class="mini" data-x="1" aria-label="Hapus lokasi">×</button>')
     : '<span class="sub">terisi saat check-in</span>';
   renderCk(tr);
 }
@@ -859,7 +859,7 @@ function renderCk(tr){
   td.innerHTML = g
     ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl('geo:'+g))+'">✔ '+esc(h)+'</a>'
     : '<button type="button" class="mini gps" data-ci="1">📍 Check-in</button>';
-  q(tr,'t').disabled = q(tr,'k').disabled = !g;
+  q(tr,'t').disabled = !g;
 }
 
 function tabel(cfg){
@@ -876,7 +876,7 @@ function tabel(cfg){
       '<td><input class="k" data-f="k" aria-label="Keterangan '+(i+1)+'"></td></tr>').join('') +
     '</tbody></table></div>' +
     '<div class="bar"><button type="button" class="act pri" id="up">⬆ Upload kunjungan hari ini</button><span id="ups" class="sub"></span></div>' +
-    '<p class="foot">Setelah selesai kunjungan hari ini, tekan Upload agar data masuk ke Pusat Data. Setelah berhasil terupload, isian tabel ini otomatis dikosongkan karena datanya sudah ada di Pusat Data. Maksimal '+NR+' kunjungan per hari. Tekan Check-in saat berada di toko: titik GPS dan jam tersimpan. Nama toko dari daftar master terkunci dan tidak bisa diubah; yang bisa diisi hanya Check-in, Transaksi, dan Keterangan. Transaksi dan Keterangan baru bisa diisi setelah check-in. Kolom Status tagihan menunjukkan Ada tagihan atau Tagihan lunas sesuai data Pusat Data. Lokasi dan nama toko tersimpan untuk minggu dan bulan berikutnya. Semua isian tersimpan otomatis.</p>';
+    '<p class="foot">Setelah selesai kunjungan hari ini, tekan Upload agar data masuk ke Pusat Data. Setelah berhasil terupload, isian tabel ini otomatis dikosongkan karena datanya sudah ada di Pusat Data. Maksimal '+NR+' kunjungan per hari. Tekan Check-in saat berada di toko: titik GPS dan jam tersimpan. Nama toko dari daftar master terkunci dan tidak bisa diubah; yang bisa diisi hanya Check-in, Transaksi, dan Keterangan. Transaksi baru bisa diisi setelah check-in, sedangkan Keterangan bisa diisi kapan saja. Kolom Status tagihan menunjukkan Ada tagihan atau Tagihan lunas sesuai data Pusat Data. Lokasi dan nama toko tersimpan untuk minggu dan bulan berikutnya. Semua isian tersimpan otomatis.</p>';
   $app.innerHTML = html;
   $app.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { minggu = b.dataset.w; tabel(cfg); });
   document.getElementById('bln').onchange = e => { if (e.target.value) { bulan = e.target.value; tabel(cfg); } };
@@ -898,7 +898,7 @@ function tabel(cfg){
     }
     q(tr,'n').value = v.n||''; q(tr,'k').value = v.k||'';
     const t = q(tr,'t'); t.value = v.t||''; t.dataset.v = t.value;
-    tr.dataset.a = v.a||''; tr.dataset.g = v.g||''; tr.dataset.h = v.h||''; tr.dataset.c = (v===dr ? (dr.c||'') : cd); renderAl(tr);
+    tr.dataset.lock = (toko[i] && (v.n||'').trim().toUpperCase()===toko[i][1].toUpperCase()) ? '1' : ''; tr.dataset.a = v.a||''; tr.dataset.g = v.g||''; tr.dataset.h = v.h||''; tr.dataset.c = (v===dr ? (dr.c||'') : cd); renderAl(tr);
     const nmOk = !!(toko[i] && (v.n||'').trim().toUpperCase()===toko[i][1].toUpperCase());
     const tg = nmOk && (cfg.auto ? TAGSET.has(toko[i][0]) : !!toko[i][4]), lu = nmOk && !tg && (cfg.auto ? LUNASSET.has(toko[i][0]) : true);
     q(tr,'n').disabled = nmOk;
@@ -957,7 +957,7 @@ function tabel(cfg){
   });
   tb.addEventListener('click', e => {
     const tr = e.target.closest('tr'); if (!tr) return;
-    if (e.target.dataset.x) { tr.dataset.a = ''; renderAl(tr); commit(tr, bulan, minggu); }
+    if (e.target.dataset.x && !tr.dataset.lock) { tr.dataset.a = ''; renderAl(tr); commit(tr, bulan, minggu); }
     if (e.target.dataset.ci) {
       const btn = e.target, bl = bulan, mg = minggu;
       if (!q(tr,'n').value.trim()) return alert('Isi nama toko dulu sebelum check-in.');
