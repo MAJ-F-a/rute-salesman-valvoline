@@ -10,6 +10,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Rute Salesman">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" crossorigin>
 <title>Rute Kunjungan Salesman Valvoline</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -146,123 +149,41 @@ const KEC = [
 /* Toko per kecamatan: [kode, nama, lat, long], urut sesuai rute. Jumlah baris tabel otomatis menyesuaikan kecamatan dengan toko terbanyak. */
 let TOKO = {
   "Lubuk Begalung": [
-    ["PDG-BOY-CV1-001", "BOY MTR", -0.965954, 100.391315],
-    ["PDG-AND-NON-001", "ANDI MOTOR", -0.971225, 100.387217],
-    ["PDG-ADM-CV1-001", "ADINOV MOTOR", -0.972432, 100.381624],
-    ["PDG-ZT2-ALF-001", "ZUL THONI TOKO", -0.975961, 100.379157],
-    ["PDG-BON-NON-001", "BONO MOTOR", -0.974632, 100.377905],
-    ["PDG-RKO-NON-001", "RIKO MTR", -0.976995, 100.390872]
+    ["", "DC MOTOR", -0.96518, 100.386994],
+    ["", "AYRA MOTOR", -0.965191, 100.386592],
+    ["", "SUNGAI PACU SERVICE", -0.960616, 100.394422]
   ],
   "Padang Timur": [
-    ["PDG-MRO-MRO-001", "MARIO MOTOR", -0.938341, 100.386698],
-    ["PDG-MGN-NON-001", "MAGNET MOTOR", -0.939236, 100.384886],
-    ["PDG-AKM-NON-001", "AKSEN MTR", -0.941232, 100.381148],
-    ["PDG-AOI-NON-001", "ANDALAS OIL", -0.941396, 100.380914],
-    ["PDG-KAN-CV3-001", "KHARISMA ANDALAS", -0.942326, 100.379686],
-    ["PDG-BSE-CV3-001", "BELVA SERVICE", -0.946145, 100.376997],
-    ["PDG-ALM-CV4-004", "ALYA MOTOR", -0.9504479, 100.388774],
-    ["PDG-SJA-NON-001", "SEMOGA JAYA MTR", -0.955506, 100.368253],
-    ["PDG-TOM-CV7-001", "TOELANK MOTOR", -0.93867, 100.36652]
+    ["", "VICKY JAYA MOTOR", -0.946273, 100.366668]
   ],
   "Kuranji": [
-    ["PDG-ISD-USH-001", "ISDARJON", -0.92124, 100.38707],
-    ["PDG-AMG-NON-001", "AMANAH GLOBAL MOTOR", -0.920913, 100.388412],
-    ["PDG-BTE-NON-001", "BINTANG TECH 2", -0.921429, 100.389168],
-    ["PDG-BKM-NON-001", "BERKAH MTR", -0.924421, 100.389037],
-    ["PDG-DMO-CV3-001", "DPM MTR", -0.924965, 100.389037],
-    ["PDG-DDM-NON-001", "DODI MOTOR", -0.923975, 100.39494],
-    ["PDG-ZDN-NON-001", "ZDN MTR", -0.921194, 100.400785],
-    ["PDG-RIF-NON-001", "RIFKI MOTOR", -0.932508, 100.405575],
-    ["PDG-RPM-CV1-001", "RPM MOTOR", -0.932318, 100.408353],
-    ["PDG-WLM-NON-001", "WASILAH MTR", -0.931968, 100.41018],
-    ["PDG-AWM-CV3-001", "AWRI MTR", -0.931235, 100.415632],
-    ["PDG-4SM-CV3-001", "4 SAUDARA MOTOR", -0.930354, 100.420996],
-    ["PDG-RMD-NON-001", "RMD MTR", -0.907584, 100.404991],
-    ["PDG-DEF-CV6-001", "DEF MOTOR", -0.889551, 100.402854],
-    ["PDG-DIM-CV7-001", "DICKI MOTOR", -0.888327, 100.393815],
-    ["PDG-RZK-CV6-001", "REZEKI MOTOR", -0.899201, 100.42377],
-    ["PDG-PUM-CV5-001", "PAK UJANG MOTOR", -0.936875, 100.389337]
+    ["", "AD MOTOR", -0.925117, 100.399658],
+    ["", "AUTO MASTER GARAGE", -0.935679, 100.39916],
+    ["", "AMANAH GLOBAL", -0.921045, 100.388152],
+    ["PDG-RIF-NON-001", "RIFKI MOTOR", -0.932441, 100.405628]
   ],
   "Lubuk Kilangan": [
-    ["PDG-BUM-NON-001", "BUJANG MTR", -0.976464, 100.404921],
-    ["PDG-WRG-NON-001", "WARGA MOTOR", -0.950058, 100.440941],
-    ["PDG-SLM-CV2-001", "SINAL MTR", -0.95627, 100.463507],
-    ["PDG-LGM-NON-001", "LAGANIS MOTOR", -0.955902, 100.469021]
   ],
   "Pauh": [
-    ["PDG-KAM-NON-001", "KANAYA MOTOR", -0.957717, 100.400882],
-    ["PDG-ASM-NON-001", "ASAHI MOTOR", -0.95746, 100.401577],
-    ["PDG-HEN-NON-001", "HENDRI", -0.957471, 100.403527],
-    ["PDG-NAS-CV6-001", "NAURA SALIM", -0.955968, 100.406716],
-    ["PDG-DIM-CV5-001", "DIMAS MTR", -0.955916, 100.406922],
-    ["PDG-UTM-NON-001", "UTAMA MANDIRI", -0.961367, 100.404811],
-    ["PDG-ADM-CV2-001", "ADE MTR", -0.950662, 100.428792],
-    ["PDG-RIM-NON-001", "RIZAL MOTOR", -0.94364, 100.43487],
-    ["PDG-AWG-CV1-001", "AWENG MOTOR", -0.931215, 100.429701],
-    ["PDG-KEM-CV3-001", "KENCANA MTR", -0.927445, 100.430968],
-    ["PDG-SHB-NON-001", "SAHABAT MOTOR", -0.925991, 100.435673],
-    ["PDG-SYF-NON-001", "SAYFUL MOTOR", -0.925088, 100.438641],
-    ["PDG-NOE-CV4-001", "NOE MOTOR", -0.923424, 100.44507]
+    ["", "RONAL MOTOR", -0.931484, 100.4145],
+    ["", "TIZI MOTOR", -0.933148, 100.431498]
   ],
   "Padang Selatan": [
-    ["PDG-ICI-CV1-001", "ICI MOTOR", -0.943152, 100.377538]
   ],
   "Padang Barat": [
-    ["PDG-DON-RYA-001", "FRANCISKUS HERIYANTO", -0.94796, 100.359384],
-    ["PDG-USJ-USJ-003", "CV USAHA JAYA ARIF", -0.94865, 100.358425],
-    ["PDG-KBN-KBN-001", "KABUN JAYA", -0.948857, 100.358437],
-    ["PDG-HMO-NON-001", "HANIFA MOTOR", -0.955155, 100.360371],
-    ["PDG-TDJ-SRB-002", "CV. TRIA DANA JAYA", -0.955155, 100.360371],
-    ["PDG-MDS-TRI-002", "CV.MANDIRI DIAN SEJAHTERA", -0.955313, 100.361693],
-    ["PDG-TKP-TRI-001", "PT. TRI KURNIA PERKASA", -0.955905, 100.363275],
-    ["PDG-AFM-CV3-001", "AFRA MOTOR", -0.958951, 100.364532],
-    ["PDG-PND-NON-001", "PANDAWA MOTOR", -0.961757, 100.355317]
   ],
   "Padang Utara": [
-    ["PDG-UMS-NON-001", "USAHA MOTOR SERVICE", -0.9248, 100.370859],
-    ["PDG-IHM-IKM-002", "IKHSAN MTR", -0.924851, 100.369413],
-    ["PDG-USA-NON-001", "USAHA ABADI", -0.925323, 100.365977],
-    ["PDG-ROL-CV5-001", "ROLING MOTOR", -0.920177, 100.361318],
-    ["PDG-LOM-CV1-001", "LOLONG MTR", -0.917497, 100.350388],
-    ["PDG-DLM-NON-001", "DELIMA MOTOR", -0.926299, 100.351397],
-    ["PDG-BRT-CV2-001", "BARATA MOTOR", -0.905394, 100.356946],
-    ["PDG-KMJ-TRI-003", "CV KENCANA MAKMUR JAYA", -0.905431, 100.363591],
-    ["PDG-ANM-CV1-001", "ANANDA MOTOR", -0.90695, 100.363669],
-    ["PDG-RAZ-NON-001", "RAZAK MTR", -0.907858, 100.363645]
+    ["", "BAGAS MOTOR", -0.929265, 100.362009]
   ],
   "Nanggalo": [
-    ["PDG-KIM-CV3-001", "KI MTR", -0.901999, 100.373578],
-    ["PDG-ABA-NON-001", "ASARU BAN", -0.898312, 100.369181],
-    ["PDG-ZZM-CV5-001", "ZIZENG MTR", -0.885197, 100.360231],
-    ["PDG-LUM-CV1-001", "LUTFI MOTOR", -0.893751, 100.352345],
-    ["PDG-LEN-CV4-001", "LENTERA MTR", -0.911908, 100.38044]
+    ["", "KATA HATI MOTOR", -0.905778, 100.356323]
   ],
   "Koto Tangah 1": [
-    ["PDG-SJM-CV5-001", "SJM MTR", -0.812262, 100.318195],
-    ["PDG-ASR-MEG-001", "ASRIL", -0.81346, 100.319534],
-    ["PDG-HOQ-NON-001", "HO Q MOTOR", -0.828192, 100.327594],
-    ["PDG-NMO-NON-001", "NURUL MOTOR", -0.833333, 100.34161],
-    ["PDG-EQM-NON-001", "EKY FEBRIAN NURSYAH", -0.847883, 100.364135],
-    ["PDG-ALS-CV1-001", "ALAN MOTOR SERVICE", -0.858472, 100.372465],
-    ["PDG-ALZ-CV5-001", "ALZAHRI MOTOR", -0.864468, 100.377513],
-    ["PDG-HES-CV3-001", "HEN SERVISE", -0.87989, 100.37839],
-    ["PDG-BIM-NON-001", "BILBOY MOTOR 2", -0.890792, 100.367187]
+    ["", "SUCHI MOTOR", -0.831199, 100.327088]
   ],
   "Koto Tangah 2": [
-    ["PDG-FMO-CV1-001", "FIFO MOTOR", -0.893124, 100.347973],
-    ["PDG-MG2-MEG-002", "MEGA MOTOR 2", -0.862368, 100.340534],
-    ["PDG-MUN-CV1-001", "MUN MTR", -0.861143, 100.335438],
-    ["PDG-BDR-NON-001", "BYDURI MOTOR", -0.837345, 100.380022],
-    ["PDG-ADM-CV5-001", "ADIB MTR", -0.849505, 100.389612],
-    ["PDG-RIO-CV4-001", "RIO MOTOR", -0.871556, 100.402811],
-    ["PDG-BMO-CV5-001", "BERKAH MTR PDG", -0.87241, 100.403602],
-    ["PDG-FKM-CV3-001", "FIKRA MOTOR", -0.87765, 100.40838],
-    ["PDG-UNM-CV6-001", "UNCU MOTOR", -0.87781, 100.408585]
   ],
   "Bungus Teluk Kabung": [
-    ["PDG-JUN-NON-001", "JUN MOTOR", -1.027863, 100.412598],
-    ["PDG-AJM-NON-001", "AJM", -1.041018, 100.412627],
-    ["PDG-OIM-CV5-001", "OKI MOTOR 2W", -1.047868, 100.412414]
   ]
 };
 const TOKO_AWAL = JSON.parse(JSON.stringify(TOKO));
@@ -308,8 +229,8 @@ async function initFirebase(){
   if (FIREBASE_CONFIG.apiKey.startsWith('ISI')) return setSync('Mode lokal: Firebase belum diisi','warn');
   try {
     const v='10.12.2', base='https://www.gstatic.com/firebasejs/'+v+'/';
-    const a = await import(base+'firebase-app.js');
-    fs = await import(base+'firebase-firestore.js');
+    const [a, f] = await Promise.all([import(base+'firebase-app.js'), import(base+'firebase-firestore.js')]);
+    fs = f;
     db = fs.getFirestore(a.initializeApp(FIREBASE_CONFIG));
     setSync('Tersambung ke Firebase','ok');
   } catch(e){ fs = null; setSync('Gagal terhubung: mode lokal','warn'); }
@@ -327,6 +248,19 @@ function save(kid, key, val){
   if (fs) fs.setDoc(fs.doc(db,'rute',kid), {d:{[key]:val}}, {merge:true})
     .then(()=>setSync('Tersambung ke Firebase','ok'))
     .catch(()=>setSync('Gagal menyimpan ke Firebase','warn'));
+}
+
+/* Kosongkan isian tabel (kid, bulan, minggu) setelah berhasil di-upload ke Pusat Data */
+const hariIniStr = () => { const d = new Date(), p = n => String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); };
+function clearWeek(kid, bl, mg, n){
+  const keys = Array.from({length:n}, (_,i) => bl+'_'+mg+'_'+i), tandaKey = 'u_'+bl+'_'+mg, tgl = hariIniStr();
+  const cur = lsGet(kid); keys.forEach(k => { delete cur[k]; }); cur[tandaKey] = tgl;
+  try { localStorage.setItem(lsKey(kid), JSON.stringify(cur)); } catch(e){}
+  if (fs) {
+    const del = {[tandaKey]: tgl}; keys.forEach(k => { del[k] = fs.deleteField(); });
+    return fs.setDoc(fs.doc(db,'rute',kid), {d:del}, {merge:true}).then(()=>true).catch(()=>false);
+  }
+  return Promise.resolve(true);
 }
 
 /* ============ 4. TAMPILAN ============ */
@@ -463,28 +397,91 @@ function clearOverrides(){
 function simpanMaster(){
   calcBaris();
   const j = JSON.stringify(TOKO);
-  try { localStorage.setItem('master', j); } catch(e){}
-  if (fs) fs.setDoc(fs.doc(db,'config','master'), {json:j, ts:Date.now()}).then(()=>setSync('Tersambung ke Firebase','ok')).catch(()=>setSync('Gagal menyimpan master','warn'));
+  try { localStorage.setItem('master', j); localStorage.setItem('masterVer', MASTER_VER); } catch(e){}
+  if (fs) fs.setDoc(fs.doc(db,'config','master'), {json:j, ts:Date.now(), ver:MASTER_VER}).then(()=>setSync('Tersambung ke Firebase','ok')).catch(()=>setSync('Gagal menyimpan master','warn'));
+}
+/* Versi master bawaan. Kalau master tersimpan (Firebase/HP) belum bernomor versi ini, master lama DIHAPUS dan diganti daftar bawaan (TOKO_AWAL) satu kali. */
+const MASTER_VER = '2026-11-05-padang13';
+function terapkanMasterBaru(){
+  const o = JSON.parse(JSON.stringify(TOKO_AWAL));
+  setMaster(o);
 }
 function setMaster(obj){
   KEC.forEach(k => { if (!obj[k[0]]) obj[k[0]] = []; });
   TOKO = obj; simpanMaster(); clearOverrides();
 }
 /* Toko yang transaksi (Ya) saat upload otomatis masuk ke Data Master kecamatannya. */
-async function tambahKeMaster(kec, rows){
-  if (fs) { try { const sn = await fs.getDoc(fs.doc(db,'config','master')); if (sn.exists() && sn.data().json) TOKO = JSON.parse(sn.data().json); } catch(e){} }
-  KEC.forEach(k => { if (!TOKO[k[0]]) TOKO[k[0]] = []; });
-  const list = TOKO[kec]; let n = 0;
-  rows.filter(r => r.t==='ya').forEach(r => {
-    const nm = r.n.trim().toUpperCase(); if (!nm) return;
-    const m = (r.a||'').match(/^geo:(-?[\d.]+),(-?[\d.]+)$/), lat = m ? +m[1] : null, lng = m ? +m[2] : null;
-    const ex = list.find(x => (r.c && x[0]===r.c) || x[1]===nm);
-    if (ex) { if (ex[2]==null && lat!=null) { ex[2]=lat; ex[3]=lng; n++; } return; }
-    const tg = (TAGIHAN.toko||[]).find(t => t.kota==='PDG' && t.nama.toUpperCase()===nm);
-    list.push([r.c || (tg ? tg.kode : ''), nm, lat, lng]); n++;
+/* Terapkan banyak upload ke satu objek master T. items = [{kec, rows}]. Mengembalikan jumlah toko yang ditambah/dilengkapi. */
+function terapkanKeMaster(T, items){
+  KEC.forEach(k => { if (!T[k[0]]) T[k[0]] = []; });
+  let n = 0;
+  items.forEach(({kec, rows}) => {
+    const list = T[kec]; if (!list) return;
+    rows.filter(r => r.t==='ya').forEach(r => {
+      const nm = r.n.trim().toUpperCase(); if (!nm) return;
+      const m = (r.a||'').match(/^geo:(-?[\d.]+),(-?[\d.]+)$/), lat = m ? +m[1] : null, lng = m ? +m[2] : null;
+      const ex = list.find(x => (r.c && x[0]===r.c) || x[1]===nm);
+      if (ex) { if (ex[2]==null && lat!=null) { ex[2]=lat; ex[3]=lng; n++; } return; }
+      const tg = (TAGIHAN.toko||[]).find(t => t.kota==='PDG' && t.nama.toUpperCase()===nm);
+      list.push([r.c || (tg ? tg.kode : ''), nm, lat, lng]); n++;
+    });
   });
+  return n;
+}
+/* Simpan hasil ke master. Di Firebase memakai transaksi supaya tidak menimpa perubahan lain. Mengembalikan jumlah, atau -1 kalau gagal. */
+async function tambahKeMasterBanyak(items){
+  if (fs) {
+    try {
+      let n = 0, hasil = null;
+      await fs.runTransaction(db, async tx => {
+        const ref = fs.doc(db,'config','master'), sn = await tx.get(ref);
+        const T = (sn.exists() && sn.data().json) ? JSON.parse(sn.data().json) : JSON.parse(JSON.stringify(TOKO));
+        n = terapkanKeMaster(T, items); hasil = T;
+        if (n) {
+          const doc = {json: JSON.stringify(T), ts: Date.now()}, v = sn.exists() ? sn.data().ver : MASTER_VER;
+          if (v) doc.ver = v;
+          tx.set(ref, doc);
+        }
+      });
+      TOKO = hasil; calcBaris();
+      if (n) { try { localStorage.setItem('master', JSON.stringify(TOKO)); } catch(e){} setSync('Tersambung ke Firebase','ok'); }
+      return n;
+    } catch(e){ return -1; }
+  }
+  const n = terapkanKeMaster(TOKO, items);
   if (n) simpanMaster();
   return n;
+}
+/* Upload yang belum diproses ke master (hanya upload kecamatan Padang buatan versi ini). */
+async function getBelumProses(){
+  if (fs) { try { const s = await fs.getDocs(fs.query(fs.collection(db,'uploads'), fs.where('diproses','==',false))); return s.docs.map(d=>d.data()).sort(cmpUp); } catch(e){ return null; } }
+  return Object.values(lsUp()).filter(u => u.diproses===false).sort(cmpUp);
+}
+async function tandaiDiproses(list){
+  const all = lsUp(); list.forEach(u => { if (all[u.id]) all[u.id].diproses = true; });
+  try { localStorage.setItem('uploads', JSON.stringify(all)); } catch(e){}
+  if (!fs) return true;
+  try {
+    for (let i=0; i<list.length; i+=400) {
+      const b = fs.writeBatch(db);
+      list.slice(i,i+400).forEach(u => b.update(fs.doc(db,'uploads',u.id), {diproses:true}));
+      await b.commit();
+    }
+    return true;
+  } catch(e){ return false; }
+}
+async function prosesHariIni(){
+  const list = await getBelumProses();
+  if (list===null) return alert('Gagal membaca upload. Cek koneksi internet lalu coba lagi.');
+  if (!list.length) return alert('Tidak ada upload baru yang perlu diproses.');
+  const items = list.filter(u => u.kec).map(u => ({kec:u.kec, rows:u.rows}));
+  const kira = terapkanKeMaster(JSON.parse(JSON.stringify(TOKO)), items);
+  if (!confirm('Proses hasil kerja salesman?\n\n• Upload belum diproses: '+list.length+'\n• Perkiraan toko baru / dilengkapi di Data Master: '+kira+'\n\nUpload yang sudah diproses tidak akan diproses lagi.\n\nLanjutkan?')) return;
+  const n = await tambahKeMasterBanyak(items);
+  if (n < 0) return alert('Gagal menyimpan ke Data Master (koneksi bermasalah). Tidak ada yang diubah, coba lagi.');
+  const ok = await tandaiDiproses(list);
+  alert('Selesai. '+n+' toko masuk / dilengkapi di Data Master dari '+list.length+' upload.'+(ok ? '' : '\n\nCatatan: penandaan upload gagal disimpan. Aman ditekan ulang, toko tidak akan dobel.'));
+  pusatPage();
 }
 async function importMaster(file){
   await loadXL();
@@ -602,7 +599,7 @@ function masterView(body){
     return '<tr class="grp"><td colspan="10">'+esc(nama)+' · '+hari+' · Minggu '+mm+' · '+t.length+' toko</td></tr>' +
       t.map((x,ix) => '<tr data-s="'+esc((x[1]+' '+(x[0]||'')+' '+nama+' '+hari).toLowerCase())+'"><td>'+(++no)+'</td><td class="l">'+esc(x[1])+'</td><td class="kd"><input class="kdi" value="'+esc(x[0]||'')+'" data-kec="'+esc(nama)+'" data-n="'+esc(x[1])+'" placeholder="isi kode" autocomplete="off" autocapitalize="characters" style="width:100%;font:inherit;text-align:center;text-transform:uppercase;padding:6px 4px;border:1.5px solid var(--soft);border-radius:4px;background:#fff"></td><td class="l">'+esc(nama)+'</td><td>'+hari+'</td><td>'+mm+'</td><td>'+nv+'</td><td>'+(x[2]??'')+'</td><td>'+(x[3]??'')+'</td>' +
         '<td>'+(x[2]!=null ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl('geo:'+x[2]+','+x[3]))+'">📍 Peta</a>' : '-')+'</td></tr>').join(''); }).join('');
-  body.innerHTML = '<p class="sub">Data master: '+total+' toko. Toko yang transaksi (Ya) saat salesman upload otomatis masuk ke sini, di kecamatannya, dan tampil lagi di jadwal kunjungan berikutnya. Kolom Hari, Minggu, dan Kunjungan berikutnya mengikuti jadwal kecamatan.</p>' +
+  body.innerHTML = '<p class="sub">Data master: '+total+' toko. Toko yang transaksi (Ya) masuk ke sini setelah admin menekan Mulai proses hasil kerja hari ini (tab Upload Salesman), di kecamatannya, dan tampil di jadwal kunjungan berikutnya. Kolom Hari, Minggu, dan Kunjungan berikutnya mengikuti jadwal kecamatan.</p>' +
     '<div class="bar"><button class="act" id="mdl">⬇ Unduh master (Excel)</button><button class="act pri" id="mup">⬆ Upload Excel jadi master</button><input type="file" id="mf" accept=".xlsx,.xls" hidden></div>' +
     '<input id="ms" type="search" placeholder="Cari nama toko, kecamatan, atau hari (misal: kamis)…" autocomplete="off" style="width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px;margin-bottom:10px">' +
     '<div class="scroll pd"><table style="min-width:1000px"><caption>Data master toko</caption><thead><tr><th style="width:48px">No.</th><th>Nama toko</th><th style="width:110px">Kode toko</th><th>Kecamatan</th><th style="width:80px">Hari</th><th style="width:70px">Minggu</th><th style="width:130px">Kunjungan berikutnya</th><th style="width:100px">Latitude</th><th style="width:100px">Longitude</th><th style="width:100px">Peta</th></tr></thead><tbody>'+(rows||'<tr><td colspan="10" class="empty">Master kosong.</td></tr>')+'</tbody></table></div>';
@@ -679,7 +676,7 @@ function tagihanView(body){
 }
 async function uploadView(body){
   body.innerHTML = '<div class="tabs"><label class="bln">Bulan <input type="month" id="ubln" value="'+upBln+'"></label></div><p class="sub" id="usum">Memuat…</p>' +
-    '<div class="bar"><button class="act pri" id="udl">⬇ Unduh Excel bulan ini</button><button class="act red" id="uclr">Bersihkan data bulan ini</button></div><div id="ulist"></div>';
+    '<div class="bar"><button class="act pri" id="udl">⬇ Unduh Excel bulan ini</button><button class="act red" id="uclr">Bersihkan data bulan ini</button></div><div class="bar"><button class="act pri" id="uproc">▶ Mulai proses hasil kerja hari ini</button><span class="sub" id="uprocs"></span></div><div id="ulist"></div>';
   document.getElementById('ubln').onchange = e => { if (e.target.value) { upBln = e.target.value; uploadView(body); } };
   const list = await getUploads(upBln);
   const box = document.getElementById('ulist'); if (!box) return;
@@ -687,6 +684,9 @@ async function uploadView(body){
   document.getElementById('usum').textContent = list.length+' upload · '+tk+' kunjungan toko · '+ya+' transaksi Ya';
   document.getElementById('udl').onclick = () => unduhUpload(upBln, list).catch(()=>alert('Gagal memuat pustaka Excel. Cek koneksi internet.'));
   document.getElementById('uclr').onclick = () => bersihkan(upBln, list);
+  const pb = document.getElementById('uproc'); if (pb) pb.onclick = async () => { pb.disabled = true; try { await prosesHariIni(); } finally { pb.disabled = false; } };
+  const blm = list.filter(u => u.diproses===false && u.kec).length;
+  const ps = document.getElementById('uprocs'); if (ps) ps.textContent = blm ? blm+' upload bulan ini belum diproses ke Data Master' : 'Semua upload bulan ini sudah diproses';
   box.innerHTML = list.length ? '<div class="scroll pd"><table><caption>Daftar upload</caption><thead><tr><th style="width:90px">Upload ke</th><th>Tanggal</th><th>Lokasi</th><th>Salesman</th><th>Toko</th><th>Check-in</th><th>Transaksi Ya</th><th>Tidak</th></tr></thead><tbody>' +
     list.map((u,i)=>'<tr><td>'+(i+1)+'</td><td>'+fmtTgl(u.tgl)+'</td><td class="l">'+esc(u.kec ? u.kec : u.wil+' ('+u.hari+')')+(u.sesuai===false?' ⚠ di luar jadwal':'')+(u.ket?'<br><small>'+esc(u.ket)+'</small>':'')+'</td><td class="l">'+esc(u.sales||'-')+'</td><td>'+u.rows.length+'</td><td>'+u.rows.filter(r=>r.g).length+'</td><td>'+u.rows.filter(r=>r.t==='ya').length+'</td><td>'+u.rows.filter(r=>r.t==='tidak').length+'</td></tr>').join('') +
     '</tbody></table></div>' : '<p class="empty">Belum ada upload di bulan ini.</p>';
@@ -735,7 +735,7 @@ function tabel(cfg){
       '<td><input class="k" data-f="k" aria-label="Keterangan '+(i+1)+'"></td></tr>').join('') +
     '</tbody></table></div>' +
     '<div class="bar"><button type="button" class="act pri" id="up">⬆ Upload kunjungan hari ini</button><span id="ups" class="sub"></span></div>' +
-    '<p class="foot">Setelah selesai kunjungan hari ini, tekan Upload agar data masuk ke Pusat Data. Maksimal '+NR+' kunjungan per hari. Tekan Check-in saat berada di toko: titik GPS dan jam tersimpan. Kolom Transaksi dan Keterangan baru bisa diisi setelah check-in. Lokasi dan nama toko tersimpan untuk minggu dan bulan berikutnya. Semua isian tersimpan otomatis.</p>';
+    '<p class="foot">Setelah selesai kunjungan hari ini, tekan Upload agar data masuk ke Pusat Data. Setelah berhasil terupload, isian tabel ini otomatis dikosongkan karena datanya sudah ada di Pusat Data. Maksimal '+NR+' kunjungan per hari. Tekan Check-in saat berada di toko: titik GPS dan jam tersimpan. Kolom Transaksi dan Keterangan baru bisa diisi setelah check-in. Lokasi dan nama toko tersimpan untuk minggu dan bulan berikutnya. Semua isian tersimpan otomatis.</p>';
   $app.innerHTML = html;
   $app.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { minggu = b.dataset.w; tabel(cfg); });
   document.getElementById('bln').onchange = e => { if (e.target.value) { bulan = e.target.value; tabel(cfg); } };
@@ -743,12 +743,14 @@ function tabel(cfg){
   const trs = [...$app.querySelectorAll('tbody tr')];
   const dflt = i => toko[i] ? {n:toko[i][1].toLowerCase(), a:(toko[i][2]!=null && toko[i][3]!=null ? 'geo:'+toko[i][2]+','+toko[i][3] : ''), t:'', k:''} : {};
   const fill = d => {
+  const selesai = d['u_'+bulan+'_'+minggu] === hariIniStr();
+  const usEl = document.getElementById('ups'); if (selesai && usEl && !usEl.textContent) usEl.textContent = '✔ Sudah diupload hari ini. Daftar toko muncul lagi pada kunjungan berikutnya.';
   const used = new Set();
   trs.forEach((_,i) => { const x = d[bulan+'_'+minggu+'_'+i]; if (x && x.n && x.n.trim()) used.add(x.n.trim().toUpperCase()); });
   trs.forEach((tr,i) => {
     if (tr.contains(document.activeElement)) return;
     const mst = null, dr = d[bulan+'_'+minggu+'_'+i], cd = toko[i] ? toko[i][0] : '';
-    const v = (dr && (!cfg.auto || (dr.c||'')===cd)) ? dr : (mst ? {n:mst.n, a:mst.a, t:'', k:''} : (!cfg.auto && !dr && toko[i] && used.has(toko[i][1].toUpperCase()) ? {} : dflt(i)));
+    const v = (dr && (!cfg.auto || (dr.c||'')===cd)) ? dr : (mst ? {n:mst.n, a:mst.a, t:'', k:''} : (!cfg.auto && !dr && toko[i] && used.has(toko[i][1].toUpperCase()) ? {} : (selesai ? {} : dflt(i))));
     q(tr,'n').value = v.n||''; q(tr,'k').value = v.k||'';
     const t = q(tr,'t'); t.value = v.t||''; t.dataset.v = t.value;
     tr.dataset.a = v.a||''; tr.dataset.g = v.g||''; tr.dataset.h = v.h||''; tr.dataset.c = (v===dr ? (dr.c||'') : cd); renderAl(tr);
@@ -768,6 +770,7 @@ function tabel(cfg){
   const tb = $app.querySelector('tbody');
   document.getElementById('up').onclick = async () => {
     const ub = document.getElementById('up'), us = document.getElementById('ups');
+    const blUp = bulan, mgUp = minggu;
     [...timers.keys()].forEach(tr => { clearTimeout(timers.get(tr)); commit(tr, bulan, minggu); }); timers.clear();
     const rows = trs.map((tr,i) => ({...rowData(tr), c:(toko[i] && q(tr,'n').value.trim().toUpperCase()===toko[i][1].toUpperCase()) ? toko[i][0] : ''})).filter(r => r.n.trim()).map(r => ({n:r.n.trim().toUpperCase(), a:r.a, g:r.g, h:r.h, c:r.c, t:r.t, k:r.k.trim()}));
     if (!rows.length) return alert('Belum ada toko yang diisi.');
@@ -779,11 +782,17 @@ function tabel(cfg){
     if (sesuai===false) info += ' PERHATIAN: hari ini bukan jadwal kecamatan ini ('+kk[2]+', minggu '+kk[1]+').';
     const f = await askUpload(info); if (!f) return;
     ub.disabled = true; us.textContent = 'Mengirim…';
-    const u = {id:tgl+'_'+kid+'_m'+minggu+'_'+(slug(f.sales)||'x'), tgl, bln:tgl.slice(0,7), kid, kec:cfg.kec||'', wil:cfg.wil||'', hari:cfg.hari||'', minggu, sales:f.sales, ket:f.ket, sesuai, ts:Date.now(), rows};
+    const u = {id:tgl+'_'+kid+'_m'+minggu+'_'+(slug(f.sales)||'x'), tgl, bln:tgl.slice(0,7), kid, kec:cfg.kec||'', wil:cfg.wil||'', hari:cfg.hari||'', minggu, sales:f.sales, ket:f.ket, sesuai, ts:Date.now(), diproses:false, rows};
     const ok = await saveUpload(u);
-    const nb = (ok && cfg.kec) ? await tambahKeMaster(cfg.kec, rows) : 0;
+    const nb = 0; /* toko baru masuk Data Master lewat tombol admin di Pusat Data */
+    let bersih = false;
+    if (ok) {
+      /* Sudah masuk Pusat Data: kosongkan isian tabel di HP supaya siap untuk kunjungan berikutnya */
+      bersih = await clearWeek(kid, blUp, mgUp, NR);
+      if (bulan===blUp && minggu===mgUp && document.body.contains(tb)) fill(lsGet(kid));
+    }
     ub.disabled = false;
-    us.textContent = ok ? '✔ Terupload '+rows.length+' toko oleh '+f.sales+' ('+fmtTgl(tgl)+' '+p2(d.getHours())+':'+p2(d.getMinutes())+')'+(nb ? ' · '+nb+' toko masuk Data Master' : '') : 'Gagal upload, coba lagi.';
+    us.textContent = ok ? '✔ Terupload '+rows.length+' toko oleh '+f.sales+' ('+fmtTgl(tgl)+' '+p2(d.getHours())+':'+p2(d.getMinutes())+')'+(nb ? ' · '+nb+' toko masuk Data Master' : '')+(bersih ? ' · isian tabel dikosongkan' : '') : 'Gagal upload, coba lagi. Isian tabel tidak dihapus.';
   };
 
   const onEdit = e => {
@@ -847,13 +856,25 @@ function route(){
 window.addEventListener('hashchange', route);
 route();
 renderTgl();
-setInterval(renderTgl, 60000);
-initFirebase().then(async () => {
+let tglTerakhir = hariIniStr();
+setInterval(async () => {
+  renderTgl();
+  const now = hariIniStr();
+  if (now !== tglTerakhir) {
+    tglTerakhir = now;
+    await segarkanConfig();
+    const ae = document.activeElement;
+    if (!(ae && ae.closest && ae.closest('tbody'))) route();
+  }
+}, 60000);
+/* Ambil master & tagihan terbaru dari Firebase (toko tambahan ikut masuk). */
+async function segarkanConfig(){
   if (!fs) return;
   let ch = false;
-  for (const nm of ['master','tagihan']) {
+  const hasil = await Promise.all(['master','tagihan'].map(nm => fs.getDoc(fs.doc(db,'config',nm)).then(sn => sn.exists() ? sn.data().json : null).catch(() => null)));
+  ['master','tagihan'].forEach((nm, i) => {
+    const j = hasil[i];
     try {
-      const sn = await fs.getDoc(fs.doc(db,'config',nm)), j = sn.exists() ? sn.data().json : null;
       if (j && j !== localStorage.getItem(nm)) {
         const o = JSON.parse(j);
         if (nm==='master') { TOKO = o; calcBaris(); } else { TAGIHAN = o; calcTag(); }
@@ -861,8 +882,17 @@ initFirebase().then(async () => {
         ch = true;
       }
     } catch(e){}
-  }
+  });
   if (ch) { const ae = document.activeElement; if (!(ae && ae.closest && ae.closest('tbody'))) route(); }
+}
+initFirebase().then(async () => {
+  let baru = false;
+  try {
+    if (fs) { const sn = await fs.getDoc(fs.doc(db,'config','master')); if ((sn.exists() ? sn.data().ver : null) !== MASTER_VER) { terapkanMasterBaru(); baru = true; } }
+    else if (localStorage.getItem('masterVer') !== MASTER_VER) { terapkanMasterBaru(); baru = true; }
+  } catch(e){}
+  if (baru) { const ae = document.activeElement; if (!(ae && ae.closest && ae.closest('tbody'))) route(); }
+  await segarkanConfig();
 });
 
 /* Pasang sebagai aplikasi (Add to Home Screen) */
