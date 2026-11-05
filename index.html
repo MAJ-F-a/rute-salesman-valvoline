@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" type="image/webp" href="data:image/webp;base64,UklGRg4FAABXRUJQVlA4IAIFAAAwGACdASowADAAPlEgjUSjoiEVVVQ4BQS2AE6ZQjzP3fzBKl/T/w/tCJEe0adhtkPMf+un6q+8X6F/896O39u60v0APLb9jL9yf2w9pm7lfrXgr4CfUfsbxT4iPaf+P4k9pr/D/lPkw/9V4LcdDyNdAD87+fF/oeU36G/7XuB/qn/rvzX7x3o1frwbVmAN8HijTM8rPqwkQ2mZCAWsKk1p+1/7Bl1nOS/ySL8WOz03bXExzCBUKXWfxDLeq+mU4aF0dfLYV65+xodIAP7/lO4kEPqKr8/DLFGnzDmWLUZu2E2xOpVZjpn/Am2VAj7a4nYt1xm+91pKraSKh4l8gB9ehhy9pm54uEOeDSZm4NFrMKDX0O5hg1Ya/dJ0cCb5QUQhYqZ05JqPW60jc0F/f487uFA9R3s1jAlk64/84X8Q25lVUzAJDQ+GsvNf9WQeZyRalrz2tuF3/5NHOg0H/32gX8T0Wvu+4FWltrYJ1ZfTDPyMBgXs4MmVW82EASKOZ3oXqNY27oy//45/y9Bb6xzM/v2HYntKEselTfbXOcE6roChqz1AToH8aGCARM/FABDCOKF3tuC+m36TYX3WCm+6HQ7kDsd086YWe/2FL4iz1n9qfAR3hEKrJPvu3/wQi0qfcOolfLX4VIbAUTc3DhoSfeCtGPYFg/x00EP+rz+EIR9QkCP+yqeD3hdNMxpEZvF2QiUDxI7+rIBhtp5Pp/vMAHMpUPOOZZSyywkUP7qJS1bKykFkszk/UiElgTAe1lfKdKlX23O4H/zA5UkxdWja8/EPdeZwO9vJiS6K/anOGeR38ysxeBLljLiL8fnqf/qrwC18vbGfghdG8fwmec7V14dzV75ZMYZA+zHwVXgUSCUlawdoS+MKkcqxj8BlCdz1gomRhtw3OHffXM40wVhR46WlXgalYuwRIfYDElGcutGtLt/jLcsTYx9gIDlH205KetZ1EaO4ZcEZvFJDwP6/nEnRG3PNFEh/boxsDFuQ4JkgLkaYW17lX9hCsP+tQ5SY4lIk/BHHky4sUR6kpnbEnoeQ3QQWoQbot/GlDoCMMa4yLdBqlD40na01/8a50yolYOAZng0lpmEb3N/tJ0g602BXC3OKCfdt+s609o76Jax5yP8DX+cVTWJA1E18Emb0/qsA3nR0Ku+M1mvPUhw6yiH25nbhBoaB3Wv6G7QOl/zSmEokJDYqEnUXESXNilOu6XfuDRj3R+thBZorr7+Cua2V7aOhbVdjkC+2dOYScYfh5dY2Mhoj/vCS7nT/kvxcUG9QPNrzUcN8/PcohECz2NmtX/6uXfxdvyES2CHISjYX/R+s5PXr+YAt6r7udyn92BD8D9fxnekExdE3Nw94g5vLkOqqU/SGaUERH52Z19XKZOLdnLk8iJTHsceZtb3Wr3b6ane5v1fyY4Aq4SxQqqj5XIeELFwqK1opURKOS7piSYAc4v+11dYM5GeqibV0yGDH0YuW41Y6X6nnenAotTxM0BoaeeejW7cWG86i3b24P2x/DUqjFV7cza3DFZjX3WWNFZ/XYBtYfMtk1C4usgVv/wLZMNr9ry6nhr85hb2vYbnFaAYx/8jNU+o3MM7A0NY1jjCvZ5DN37d7HXHDD6OlUsMv/OH7Q4xRNSyl4Ylf7NTcmpi0OVNfeOLbwXH5lDeLdHYIhFZ4TxU2VlQW6wtLoHXcNodX0FWJG33zkMAA">
 <meta name="theme-color" content="#0a2a6e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rute Salesman">
 <title>Rute Kunjungan Salesman Valvoline</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -859,6 +864,9 @@ initFirebase().then(async () => {
   }
   if (ch) { const ae = document.activeElement; if (!(ae && ae.closest && ae.closest('tbody'))) route(); }
 });
+
+/* Pasang sebagai aplikasi (Add to Home Screen) */
+if ('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
