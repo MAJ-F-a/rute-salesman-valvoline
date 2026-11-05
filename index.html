@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/webp" href="data:image/webp;base64,UklGRg4FAABXRUJQVlA4IAIFAAAwGACdASowADAAPlEgjUSjoiEVVVQ4BQS2AE6ZQjzP3fzBKl/T/w/tCJEe0adhtkPMf+un6q+8X6F/896O39u60v0APLb9jL9yf2w9pm7lfrXgr4CfUfsbxT4iPaf+P4k9pr/D/lPkw/9V4LcdDyNdAD87+fF/oeU36G/7XuB/qn/rvzX7x3o1frwbVmAN8HijTM8rPqwkQ2mZCAWsKk1p+1/7Bl1nOS/ySL8WOz03bXExzCBUKXWfxDLeq+mU4aF0dfLYV65+xodIAP7/lO4kEPqKr8/DLFGnzDmWLUZu2E2xOpVZjpn/Am2VAj7a4nYt1xm+91pKraSKh4l8gB9ehhy9pm54uEOeDSZm4NFrMKDX0O5hg1Ya/dJ0cCb5QUQhYqZ05JqPW60jc0F/f487uFA9R3s1jAlk64/84X8Q25lVUzAJDQ+GsvNf9WQeZyRalrz2tuF3/5NHOg0H/32gX8T0Wvu+4FWltrYJ1ZfTDPyMBgXs4MmVW82EASKOZ3oXqNY27oy//45/y9Bb6xzM/v2HYntKEselTfbXOcE6roChqz1AToH8aGCARM/FABDCOKF3tuC+m36TYX3WCm+6HQ7kDsd086YWe/2FL4iz1n9qfAR3hEKrJPvu3/wQi0qfcOolfLX4VIbAUTc3DhoSfeCtGPYFg/x00EP+rz+EIR9QkCP+yqeD3hdNMxpEZvF2QiUDxI7+rIBhtp5Pp/vMAHMpUPOOZZSyywkUP7qJS1bKykFkszk/UiElgTAe1lfKdKlX23O4H/zA5UkxdWja8/EPdeZwO9vJiS6K/anOGeR38ysxeBLljLiL8fnqf/qrwC18vbGfghdG8fwmec7V14dzV75ZMYZA+zHwVXgUSCUlawdoS+MKkcqxj8BlCdz1gomRhtw3OHffXM40wVhR46WlXgalYuwRIfYDElGcutGtLt/jLcsTYx9gIDlH205KetZ1EaO4ZcEZvFJDwP6/nEnRG3PNFEh/boxsDFuQ4JkgLkaYW17lX9hCsP+tQ5SY4lIk/BHHky4sUR6kpnbEnoeQ3QQWoQbot/GlDoCMMa4yLdBqlD40na01/8a50yolYOAZng0lpmEb3N/tJ0g602BXC3OKCfdt+s609o76Jax5yP8DX+cVTWJA1E18Emb0/qsA3nR0Ku+M1mvPUhw6yiH25nbhBoaB3Wv6G7QOl/zSmEokJDYqEnUXESXNilOu6XfuDRj3R+thBZorr7+Cua2V7aOhbVdjkC+2dOYScYfh5dY2Mhoj/vCS7nT/kvxcUG9QPNrzUcN8/PcohECz2NmtX/6uXfxdvyES2CHISjYX/R+s5PXr+YAt6r7udyn92BD8D9fxnekExdE3Nw94g5vLkOqqU/SGaUERH52Z19XKZOLdnLk8iJTHsceZtb3Wr3b6ane5v1fyY4Aq4SxQqqj5XIeELFwqK1opURKOS7piSYAc4v+11dYM5GeqibV0yGDH0YuW41Y6X6nnenAotTxM0BoaeeejW7cWG86i3b24P2x/DUqjFV7cza3DFZjX3WWNFZ/XYBtYfMtk1C4usgVv/wLZMNr9ry6nhr85hb2vYbnFaAYx/8jNU+o3MM7A0NY1jjCvZ5DN37d7HXHDD6OlUsMv/OH7Q4xRNSyl4Ylf7NTcmpi0OVNfeOLbwXH5lDeLdHYIhFZ4TxU2VlQW6wtLoHXcNodX0FWJG33zkMAA">
+<meta name="theme-color" content="#0a2a6e">
+<title>Rute Kunjungan Salesman Valvoline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f1b33;--paper:#eef3fb;--line:#12285a;--soft:#cdd8ea;--mute:#55627a;--acc:#1557c8;--navy:#0a1e4f;--ok:#1f7a4d;--warn:#9a6700}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Barlow,system-ui,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+header.top{background:linear-gradient(120deg,#051233 0%,#0a2a6e 55%,#1450b8 100%);color:#fff;border-bottom:4px solid #4da3ff}
+header.top .wrap{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;padding-top:16px;padding-bottom:14px;align-items:center}
+h1{margin:0;font:700 clamp(22px,5.4vw,38px)/1.05 "Barlow Condensed",sans-serif;letter-spacing:.01em}
+header.top .wrap{flex-wrap:wrap}.brand{display:flex;gap:14px;align-items:center;flex:1 1 260px;min-width:0}.logo{width:clamp(54px,15vw,80px);height:auto;aspect-ratio:1;border-radius:50%;flex:none;box-shadow:0 0 0 2px #ffffff40,0 4px 14px #00000066}
+.tgl{margin-top:8px;font-size:15px;opacity:.92}
+.jad td.now{background:#d6e6ff;box-shadow:inset 0 -4px 0 var(--acc)}.jad td.now a{color:var(--acc)}
+.sync{font-size:12px;padding:3px 9px;border-radius:99px;background:#ffffff26;white-space:nowrap}
+.sync.ok::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:6px}
+.sync.warn::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#fbbf24;margin-right:6px}
+main{padding-top:20px;padding-bottom:48px}
+h2{font:700 26px/1.1 "Barlow Condensed",sans-serif;margin:6px 0 4px}
+.back{display:inline-block;margin:0 0 8px;color:var(--acc);font-weight:600;text-decoration:none}
+.back:hover{text-decoration:underline}
+.sub{color:var(--mute);margin:0 0 14px}
+.list{border-top:2px solid var(--line)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px;border-bottom:1px solid var(--soft);color:inherit;text-decoration:none;min-height:54px}
+.row:hover,.row:focus-visible{background:#fff;outline:none;box-shadow:inset 4px 0 0 var(--acc)}
+.row b{font:700 22px/1 "Barlow Condensed",sans-serif}
+.row .no{display:inline-block;width:30px;color:var(--mute);font-weight:500}
+.row small{color:var(--mute)}
+.row.on small{color:var(--acc);font-weight:600}
+.tabs{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap;align-items:center}
+.bln{margin-left:auto;font-weight:600;font-size:15px}.bln input{font:inherit;padding:6px 8px;border:1.5px solid var(--line);border-radius:4px;background:#fff}
+.mini{font:600 12px Barlow,sans-serif;padding:4px 8px;border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;margin-left:4px}
+.al{min-width:190px}.al input{width:calc(100% - 92px)}
+.tabs button{font:600 15px Barlow,sans-serif;padding:8px 16px;border:1.5px solid var(--line);background:#fff;cursor:pointer;border-radius:4px}
+.tabs button[aria-pressed=true]{background:var(--line);color:#fff}
+.tabs button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #2563eb;outline-offset:1px}
+.scroll{overflow-x:auto;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:700px}
+caption{caption-side:top;text-align:center;padding:6px;font-size:15px}
+th,td{border:1px solid var(--line);padding:0 8px;height:44px;text-align:center}
+th{font-weight:600;background:#fff}
+td.l{text-align:left}
+td a{color:#1d4ed8}
+td input{width:100%;height:42px;border:0;background:transparent;font:inherit;text-align:center;padding:0 4px}
+td input.k{text-align:left}
+td input:focus{background:#e8f1ff}
+.jad table{min-width:660px;table-layout:fixed}.jad td{height:auto;padding:0}.jad td a{display:block;padding:22px 8px;color:var(--ink);font:700 19px/1.15 "Barlow Condensed",sans-serif;text-decoration:none}.jad td a small{display:block;margin-top:4px;font:400 12px Barlow,sans-serif;color:var(--mute)}.jad td a:hover,.jad td a:focus-visible{background:#e4eeff;color:var(--acc);outline:none}
+#hi a{color:var(--acc)}
+.empty{padding:28px 4px;color:var(--mute)}
+.foot{margin-top:10px;font-size:13px;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;min-height:92px;padding:12px 6px;border-radius:10px;color:#fff;text-decoration:none;background:linear-gradient(145deg,#0a2a6e 0%,#1557c8 100%);box-shadow:0 2px 6px #0a1e4f40;border:2px solid transparent;overflow-wrap:anywhere}
+.tile b{font:700 clamp(17px,4.6vw,22px)/1.1 "Barlow Condensed",sans-serif;letter-spacing:.01em}
+.tile small{font-size:12px;line-height:1.2;opacity:.85}
+.tile:hover,.tile:focus-visible{background:linear-gradient(145deg,#0f3a94 0%,#2a6fe0 100%);outline:none;border-color:#4da3ff}
+.tile:active{transform:scale(.98)}
+.tile.on{border-color:#4da3ff;box-shadow:0 0 0 2px #4da3ff66,0 2px 6px #0a1e4f40}
+.tile.on small{opacity:1;font-weight:600;color:#bfe0ff}
+.tile.kosong{background:linear-gradient(145deg,#3b5a94 0%,#5a7cb8 100%)}
+.wk{font:700 22px/1.1 "Barlow Condensed",sans-serif;color:var(--navy);margin:20px 0 10px}
+.tile .hr{font:600 12px Barlow,sans-serif;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+.tile.now{background:linear-gradient(145deg,#1557c8 0%,#4da3ff 100%);border-color:#fff;box-shadow:0 0 0 3px #1557c8,0 4px 12px #0a1e4f66}
+.tile.now .hr::after{content:" · hari ini";color:#fff;font-weight:700}
+button.gps{font-size:14px;padding:8px 14px;min-height:36px;background:#1557c8;color:#fff;border-color:#1557c8}
+button.gps:disabled{opacity:.6}
+a.maplink{display:inline-flex;align-items:center;min-height:36px;padding:4px 10px;border-radius:6px;background:#e4eeff;color:var(--acc);font-weight:600;text-decoration:none;white-space:nowrap}
+a.maplink:hover,a.maplink:focus-visible{background:#cfe0ff}
+td select{width:100%;height:42px;border:0;background:transparent;font:inherit;text-align:center;padding:0 4px;cursor:pointer}
+td select:focus{background:#e8f1ff}
+td select[data-v=ya]{color:var(--ok);font-weight:700}
+td select[data-v=tidak]{color:#b42318;font-weight:700}
+a.pusat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;margin:0 0 18px;padding:26px 12px;border-radius:12px;color:#fff;text-decoration:none;background:linear-gradient(120deg,#051233 0%,#0a2a6e 50%,#1450b8 100%);border:2px solid #4da3ff;box-shadow:0 4px 14px #0a1e4f55}
+a.pusat b{font:700 clamp(34px,10vw,54px)/1 "Barlow Condensed",sans-serif;letter-spacing:.04em}
+a.pusat small{font-size:14px;opacity:.85}
+a.pusat:hover,a.pusat:focus-visible{outline:3px solid #2563eb;outline-offset:2px}
+tr.grp td{background:#dbe7fb;font:700 18px "Barlow Condensed",sans-serif;text-align:left;padding:8px 10px;color:var(--navy)}
+.pd table{min-width:640px}
+.ov{position:fixed;inset:0;background:#051233b3;display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.ov[hidden]{display:none}
+.ov form{background:#fff;border-radius:12px;padding:20px;width:min(340px,100%);box-shadow:0 10px 40px #0008}
+.ov h3{margin:0 0 4px;font:700 24px/1.1 "Barlow Condensed",sans-serif}
+.ov p{margin:0 0 10px;color:var(--mute);font-size:14px}
+.ov input{width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px}
+.ov .err{color:#b42318;min-height:20px;margin:6px 0;font-size:14px}
+.ov .btns{display:flex;gap:8px;justify-content:flex-end}
+.ov button{font:600 15px Barlow,sans-serif;padding:9px 16px;border-radius:6px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
+.ov button.pri{background:var(--line);color:#fff}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.act{font:600 14px Barlow,sans-serif;padding:9px 14px;border-radius:6px;border:1.5px solid var(--line);background:#fff;cursor:pointer;min-height:38px}
+.act.pri{background:var(--line);color:#fff}.act.red{color:#b42318;border-color:#b42318}.act:disabled{opacity:.6}
+.bar .sub{margin:0}
+td select:disabled,td input.k:disabled{background:#eef1f6;cursor:not-allowed;color:#8a94a8}
+.ck{white-space:nowrap}
+.ov label{display:block;font-weight:600;font-size:14px;margin-top:8px}
+tr.tag td:first-child{box-shadow:inset 4px 0 0 #d92d20;background:#fff1f0}
+.sg{white-space:nowrap;color:#b42318;font-weight:700}
+@media print{header.top,.tabs,.back,.sync{display:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><img class="logo" alt="Valvoline dan CV. Mahkota Abadi Jaya" src="data:image/webp;base64,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"><div><h1>RUTE KUNJUNGAN SALESMAN VALVOLINE</h1><div id="tgl" class="tgl"></div></div></div>
+  <span id="sync" class="sync warn">Memeriksa koneksi</span>
+</div></header>
+<main class="wrap" id="app"></main>
+
+<div class="ov" id="pw" hidden><form id="pwf" autocomplete="off"><h3>Pusat Data</h3><p>Masukkan password untuk membuka.</p><input type="password" id="pwi" autocomplete="new-password" aria-label="Password"><div class="err" id="pwe" role="alert"></div><div class="btns"><button type="button" id="pwno">Batal</button><button type="submit" class="pri">Buka</button></div></form></div>
+<div class="ov" id="upov" hidden><form id="upf" autocomplete="off"><h3>Upload kunjungan</h3><p id="upinfo"></p><label>Nama salesman<input id="upn" maxlength="40"></label><label>Keterangan<input id="upk" maxlength="200" placeholder="Opsional"></label><div class="err" id="upe" role="alert"></div><div class="btns"><button type="button" id="upno">Batal</button><button type="submit" class="pri">Upload</button></div></form></div>
+<script type="module">
+/* ============ 1. ISI KONFIGURASI FIREBASE DI SINI ============
+   Firebase Console > Project settings > Your apps > Web app > firebaseConfig.
+   Selama apiKey masih "ISI_...", web jalan dalam mode lokal (data hanya di HP/komputer itu). */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAtzxlHuiyim-Bd1-9tmsEbF7gTaRj4DpE",
+  authDomain: "rute-salesman.firebaseapp.com",
+  projectId: "rute-salesman",
+  appId: "1:873110062148:web:e4aa1e5409f82c66d0e811"
+};
+
+/* ============ 2. DATA WILAYAH & TOKO ============ */
+const WILAYAH = ['Padang','Bukittinggi','Payakumbuh','Batusangkar','Padang Panjang','Solok','Sawah Lunto','Sijunjung','Dharmasraya','Pasaman Timur','Pasaman Barat','Solok Selatan','Pesisir Selatan','Pariaman','Sungai Penuh - Kerinci'];
+
+/* Jadwal kecamatan Padang: [nama, minggu, hari]. Ubah di sini kalau jadwalnya berubah. */
+const HARI = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const KEC = [
+  ['Lubuk Begalung','1 / 3','Senin'],['Padang Timur','1 / 3','Selasa'],['Kuranji','1 / 3','Rabu'],
+  ['Lubuk Kilangan','1 / 3','Kamis'],['Pauh','1 / 3','Jumat'],['Padang Selatan','1 / 3','Sabtu'],
+  ['Padang Barat','2 / 4','Senin'],['Padang Utara','2 / 4','Selasa'],['Nanggalo','2 / 4','Rabu'],
+  ['Koto Tangah 1','2 / 4','Kamis'],['Koto Tangah 2','2 / 4','Jumat'],['Bungus Teluk Kabung','2 / 4','Sabtu']
+];
+
+/* Toko per kecamatan: [kode, nama, lat, long], urut sesuai rute. Jumlah baris tabel otomatis menyesuaikan kecamatan dengan toko terbanyak. */
+let TOKO = {
+  "Lubuk Begalung": [
+    ["PDG-BOY-CV1-001", "BOY MTR", -0.965954, 100.391315],
+    ["PDG-AND-NON-001", "ANDI MOTOR", -0.971225, 100.387217],
+    ["PDG-ADM-CV1-001", "ADINOV MOTOR", -0.972432, 100.381624],
+    ["PDG-ZT2-ALF-001", "ZUL THONI TOKO", -0.975961, 100.379157],
+    ["PDG-BON-NON-001", "BONO MOTOR", -0.974632, 100.377905],
+    ["PDG-RKO-NON-001", "RIKO MTR", -0.976995, 100.390872]
+  ],
+  "Padang Timur": [
+    ["PDG-MRO-MRO-001", "MARIO MOTOR", -0.938341, 100.386698],
+    ["PDG-MGN-NON-001", "MAGNET MOTOR", -0.939236, 100.384886],
+    ["PDG-AKM-NON-001", "AKSEN MTR", -0.941232, 100.381148],
+    ["PDG-AOI-NON-001", "ANDALAS OIL", -0.941396, 100.380914],
+    ["PDG-KAN-CV3-001", "KHARISMA ANDALAS", -0.942326, 100.379686],
+    ["PDG-BSE-CV3-001", "BELVA SERVICE", -0.946145, 100.376997],
+    ["PDG-ALM-CV4-004", "ALYA MOTOR", -0.9504479, 100.388774],
+    ["PDG-SJA-NON-001", "SEMOGA JAYA MTR", -0.955506, 100.368253],
+    ["PDG-TOM-CV7-001", "TOELANK MOTOR", -0.93867, 100.36652]
+  ],
+  "Kuranji": [
+    ["PDG-ISD-USH-001", "ISDARJON", -0.92124, 100.38707],
+    ["PDG-AMG-NON-001", "AMANAH GLOBAL MOTOR", -0.920913, 100.388412],
+    ["PDG-BTE-NON-001", "BINTANG TECH 2", -0.921429, 100.389168],
+    ["PDG-BKM-NON-001", "BERKAH MTR", -0.924421, 100.389037],
+    ["PDG-DMO-CV3-001", "DPM MTR", -0.924965, 100.389037],
+    ["PDG-DDM-NON-001", "DODI MOTOR", -0.923975, 100.39494],
+    ["PDG-ZDN-NON-001", "ZDN MTR", -0.921194, 100.400785],
+    ["PDG-RIF-NON-001", "RIFKI MOTOR", -0.932508, 100.405575],
+    ["PDG-RPM-CV1-001", "RPM MOTOR", -0.932318, 100.408353],
+    ["PDG-WLM-NON-001", "WASILAH MTR", -0.931968, 100.41018],
+    ["PDG-AWM-CV3-001", "AWRI MTR", -0.931235, 100.415632],
+    ["PDG-4SM-CV3-001", "4 SAUDARA MOTOR", -0.930354, 100.420996],
+    ["PDG-RMD-NON-001", "RMD MTR", -0.907584, 100.404991],
+    ["PDG-DEF-CV6-001", "DEF MOTOR", -0.889551, 100.402854],
+    ["PDG-DIM-CV7-001", "DICKI MOTOR", -0.888327, 100.393815],
+    ["PDG-RZK-CV6-001", "REZEKI MOTOR", -0.899201, 100.42377],
+    ["PDG-PUM-CV5-001", "PAK UJANG MOTOR", -0.936875, 100.389337]
+  ],
+  "Lubuk Kilangan": [
+    ["PDG-BUM-NON-001", "BUJANG MTR", -0.976464, 100.404921],
+    ["PDG-WRG-NON-001", "WARGA MOTOR", -0.950058, 100.440941],
+    ["PDG-SLM-CV2-001", "SINAL MTR", -0.95627, 100.463507],
+    ["PDG-LGM-NON-001", "LAGANIS MOTOR", -0.955902, 100.469021]
+  ],
+  "Pauh": [
+    ["PDG-KAM-NON-001", "KANAYA MOTOR", -0.957717, 100.400882],
+    ["PDG-ASM-NON-001", "ASAHI MOTOR", -0.95746, 100.401577],
+    ["PDG-HEN-NON-001", "HENDRI", -0.957471, 100.403527],
+    ["PDG-NAS-CV6-001", "NAURA SALIM", -0.955968, 100.406716],
+    ["PDG-DIM-CV5-001", "DIMAS MTR", -0.955916, 100.406922],
+    ["PDG-UTM-NON-001", "UTAMA MANDIRI", -0.961367, 100.404811],
+    ["PDG-ADM-CV2-001", "ADE MTR", -0.950662, 100.428792],
+    ["PDG-RIM-NON-001", "RIZAL MOTOR", -0.94364, 100.43487],
+    ["PDG-AWG-CV1-001", "AWENG MOTOR", -0.931215, 100.429701],
+    ["PDG-KEM-CV3-001", "KENCANA MTR", -0.927445, 100.430968],
+    ["PDG-SHB-NON-001", "SAHABAT MOTOR", -0.925991, 100.435673],
+    ["PDG-SYF-NON-001", "SAYFUL MOTOR", -0.925088, 100.438641],
+    ["PDG-NOE-CV4-001", "NOE MOTOR", -0.923424, 100.44507]
+  ],
+  "Padang Selatan": [
+    ["PDG-ICI-CV1-001", "ICI MOTOR", -0.943152, 100.377538]
+  ],
+  "Padang Barat": [
+    ["PDG-DON-RYA-001", "FRANCISKUS HERIYANTO", -0.94796, 100.359384],
+    ["PDG-USJ-USJ-003", "CV USAHA JAYA ARIF", -0.94865, 100.358425],
+    ["PDG-KBN-KBN-001", "KABUN JAYA", -0.948857, 100.358437],
+    ["PDG-HMO-NON-001", "HANIFA MOTOR", -0.955155, 100.360371],
+    ["PDG-TDJ-SRB-002", "CV. TRIA DANA JAYA", -0.955155, 100.360371],
+    ["PDG-MDS-TRI-002", "CV.MANDIRI DIAN SEJAHTERA", -0.955313, 100.361693],
+    ["PDG-TKP-TRI-001", "PT. TRI KURNIA PERKASA", -0.955905, 100.363275],
+    ["PDG-AFM-CV3-001", "AFRA MOTOR", -0.958951, 100.364532],
+    ["PDG-PND-NON-001", "PANDAWA MOTOR", -0.961757, 100.355317]
+  ],
+  "Padang Utara": [
+    ["PDG-UMS-NON-001", "USAHA MOTOR SERVICE", -0.9248, 100.370859],
+    ["PDG-IHM-IKM-002", "IKHSAN MTR", -0.924851, 100.369413],
+    ["PDG-USA-NON-001", "USAHA ABADI", -0.925323, 100.365977],
+    ["PDG-ROL-CV5-001", "ROLING MOTOR", -0.920177, 100.361318],
+    ["PDG-LOM-CV1-001", "LOLONG MTR", -0.917497, 100.350388],
+    ["PDG-DLM-NON-001", "DELIMA MOTOR", -0.926299, 100.351397],
+    ["PDG-BRT-CV2-001", "BARATA MOTOR", -0.905394, 100.356946],
+    ["PDG-KMJ-TRI-003", "CV KENCANA MAKMUR JAYA", -0.905431, 100.363591],
+    ["PDG-ANM-CV1-001", "ANANDA MOTOR", -0.90695, 100.363669],
+    ["PDG-RAZ-NON-001", "RAZAK MTR", -0.907858, 100.363645]
+  ],
+  "Nanggalo": [
+    ["PDG-KIM-CV3-001", "KI MTR", -0.901999, 100.373578],
+    ["PDG-ABA-NON-001", "ASARU BAN", -0.898312, 100.369181],
+    ["PDG-ZZM-CV5-001", "ZIZENG MTR", -0.885197, 100.360231],
+    ["PDG-LUM-CV1-001", "LUTFI MOTOR", -0.893751, 100.352345],
+    ["PDG-LEN-CV4-001", "LENTERA MTR", -0.911908, 100.38044]
+  ],
+  "Koto Tangah 1": [
+    ["PDG-SJM-CV5-001", "SJM MTR", -0.812262, 100.318195],
+    ["PDG-ASR-MEG-001", "ASRIL", -0.81346, 100.319534],
+    ["PDG-HOQ-NON-001", "HO Q MOTOR", -0.828192, 100.327594],
+    ["PDG-NMO-NON-001", "NURUL MOTOR", -0.833333, 100.34161],
+    ["PDG-EQM-NON-001", "EKY FEBRIAN NURSYAH", -0.847883, 100.364135],
+    ["PDG-ALS-CV1-001", "ALAN MOTOR SERVICE", -0.858472, 100.372465],
+    ["PDG-ALZ-CV5-001", "ALZAHRI MOTOR", -0.864468, 100.377513],
+    ["PDG-HES-CV3-001", "HEN SERVISE", -0.87989, 100.37839],
+    ["PDG-BIM-NON-001", "BILBOY MOTOR 2", -0.890792, 100.367187]
+  ],
+  "Koto Tangah 2": [
+    ["PDG-FMO-CV1-001", "FIFO MOTOR", -0.893124, 100.347973],
+    ["PDG-MG2-MEG-002", "MEGA MOTOR 2", -0.862368, 100.340534],
+    ["PDG-MUN-CV1-001", "MUN MTR", -0.861143, 100.335438],
+    ["PDG-BDR-NON-001", "BYDURI MOTOR", -0.837345, 100.380022],
+    ["PDG-ADM-CV5-001", "ADIB MTR", -0.849505, 100.389612],
+    ["PDG-RIO-CV4-001", "RIO MOTOR", -0.871556, 100.402811],
+    ["PDG-BMO-CV5-001", "BERKAH MTR PDG", -0.87241, 100.403602],
+    ["PDG-FKM-CV3-001", "FIKRA MOTOR", -0.87765, 100.40838],
+    ["PDG-UNM-CV6-001", "UNCU MOTOR", -0.87781, 100.408585]
+  ],
+  "Bungus Teluk Kabung": [
+    ["PDG-JUN-NON-001", "JUN MOTOR", -1.027863, 100.412598],
+    ["PDG-AJM-NON-001", "AJM", -1.041018, 100.412627],
+    ["PDG-OIM-CV5-001", "OKI MOTOR 2W", -1.047868, 100.412414]
+  ]
+};
+const TOKO_AWAL = JSON.parse(JSON.stringify(TOKO));
+TOKO = {}; KEC.forEach(k => TOKO[k[0]] = []);
+try { const m = localStorage.getItem('master'); if (m) TOKO = JSON.parse(m); } catch(e){}
+let BARIS; const calcBaris = () => { BARIS = Math.max(13, ...Object.values(TOKO).map(a=>a.length)); }; calcBaris();
+/* Awalan kode toko -> wilayah. Kalau satu kode punya lebih dari satu wilayah (SLK), wilayahnya dipilih di Pusat Data > Tagihan Toko. */
+const KODE_WIL = {PDG:['Padang'],PSB:['Pasaman Barat'],BTS:['Batusangkar'],PYK:['Payakumbuh'],BKT:['Bukittinggi'],SLK:['Solok','Sawah Lunto','Sijunjung'],SSL:['Solok Selatan'],MLB:['Solok Selatan'],PRM:['Pariaman'],PSL:['Pesisir Selatan'],PSR:['Pesisir Selatan'],TPN:['Pesisir Selatan'],KRC:['Pesisir Selatan'],DMR:['Dharmasraya'],PST:['Pasaman Timur']};
+let TAGIHAN = {tgl:'', file:'', toko:[], sel:{}};
+try { const t = localStorage.getItem('tagihan'); if (t) TAGIHAN = JSON.parse(t); } catch(e){}
+let TAGSET = new Set(); let TAGSISA = {};
+const rp = n => n==null ? '-' : 'Rp '+Math.round(n).toLocaleString('id-ID');
+const calcTag = () => { TAGSET = new Set((TAGIHAN.toko||[]).map(t=>t.kode)); TAGSISA = {}; (TAGIHAN.toko||[]).forEach(t => TAGSISA[t.kode] = t.sisa); }; calcTag();
+const wilayahOf = t => { const c = KODE_WIL[t.kota]; if (!c) return null; return c.length===1 ? c[0] : ((TAGIHAN.sel||{})[t.kode] || null); };
+const autoToko = w => (TAGIHAN.toko||[]).filter(t => wilayahOf(t)===w).sort((a,b)=>a.nama.localeCompare(b.nama)).map(t => [t.kode, t.nama, null, null]);
+const padangTag = () => KEC.reduce((n,k) => n + (TOKO[k[0]]||[]).filter(x => TAGSET.has(x[0])).length, 0);
+
+/* ============ 3. PENYIMPANAN (Firebase atau lokal) ============ */
+const $app = document.getElementById('app'), $sync = document.getElementById('sync');
+let fs = null, db = null, unsub = null;
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function infoHariIni(d = new Date()){
+  /* Minggu 1 dimulai pada hari Senin pertama tiap bulan. Tanggal sebelum Senin pertama ikut bulan sebelumnya. */
+  const firstMon = (y,m) => 1 + ((8 - new Date(y,m,1).getDay()) % 7);
+  let y = d.getFullYear(), m = d.getMonth(), fm = firstMon(y,m);
+  if (d.getDate() < fm) { m--; if (m<0) { m=11; y--; } fm = firstMon(y,m); }
+  const diff = Math.floor((new Date(d.getFullYear(),d.getMonth(),d.getDate()) - new Date(y,m,fm)) / 864e5);
+  const n = Math.floor(diff/7) + 1, hi = (d.getDay()+6) % 7;
+  return {d, n, hari: HARI[hi] || null, bulan: y+'-'+String(m+1).padStart(2,'0'), grup: n>4 ? null : (n%2 ? '1 / 3' : '2 / 4')};
+}
+function renderTgl(){
+  const i = infoHariIni(), tg = new Intl.DateTimeFormat('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(i.d);
+  document.getElementById('tgl').textContent = tg + ' · ' + (i.n>4 ? 'Minggu ke-5, tidak ada jadwal' : 'Minggu ke-'+i.n+' (jadwal '+i.grup+')');
+  $app.querySelectorAll('.tile[data-m]').forEach(t => t.classList.toggle('now', t.dataset.m===i.grup && t.dataset.h===i.hari));
+  const el = document.getElementById('hi'); if (!el) return;
+  const k = i.grup && i.hari && KEC.find(x=>x[1]===i.grup && x[2]===i.hari);
+  el.innerHTML = k ? 'Hari ini: <a href="#padang/'+slug(k[0])+'"><b>'+esc(k[0])+'</b></a>' : 'Hari ini tidak ada kunjungan terjadwal.';
+}
+const setSync = (t,c) => { $sync.textContent = t; $sync.className = 'sync ' + c; };
+
+async function initFirebase(){
+  if (FIREBASE_CONFIG.apiKey.startsWith('ISI')) return setSync('Mode lokal: Firebase belum diisi','warn');
+  try {
+    const v='10.12.2', base='https://www.gstatic.com/firebasejs/'+v+'/';
+    const a = await import(base+'firebase-app.js');
+    fs = await import(base+'firebase-firestore.js');
+    db = fs.getFirestore(a.initializeApp(FIREBASE_CONFIG));
+    setSync('Tersambung ke Firebase','ok');
+  } catch(e){ fs = null; setSync('Gagal terhubung: mode lokal','warn'); }
+}
+const lsKey = kid => 'rute:' + kid;
+const lsGet = kid => { try { return JSON.parse(localStorage.getItem(lsKey(kid))||'{}'); } catch(e){ return {}; } };
+
+function listen(kid, cb){
+  if (unsub) { unsub(); unsub = null; }
+  cb(lsGet(kid));
+  if (fs) unsub = fs.onSnapshot(fs.doc(db,'rute',kid), s => cb((s.data()||{}).d||{}), () => setSync('Koneksi terputus','warn'));
+}
+function save(kid, key, val){
+  const cur = lsGet(kid); cur[key] = val; try { localStorage.setItem(lsKey(kid), JSON.stringify(cur)); } catch(e){}
+  if (fs) fs.setDoc(fs.doc(db,'rute',kid), {d:{[key]:val}}, {merge:true})
+    .then(()=>setSync('Tersambung ke Firebase','ok'))
+    .catch(()=>setSync('Gagal menyimpan ke Firebase','warn'));
+}
+
+/* ============ 4. TAMPILAN ============ */
+const PW_HASH = 'ba45bbc97e0ccadf931d11d6219a199516944498b1dc296ac80d64a939e5ce70';
+const $pw = document.getElementById('pw'), $pwi = document.getElementById('pwi'), $pwe = document.getElementById('pwe');
+let pwDone = null, pusatOk = false;
+async function sha(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+function askPw(){ return new Promise(res => { $pwi.value=''; $pwe.textContent=''; $pw.hidden=false; pwDone=res; setTimeout(()=>$pwi.focus(),30); }); }
+function closePw(ok){ $pw.hidden=true; const r=pwDone; pwDone=null; if (r) r(ok); }
+document.getElementById('pwno').onclick = () => closePw(false);
+$pw.addEventListener('click', e => { if (e.target===$pw) closePw(false); });
+document.getElementById('pwf').onsubmit = async ev => {
+  ev.preventDefault();
+  let ok = false;
+  try { ok = (await sha($pwi.value)) === PW_HASH; } catch(e){ $pwe.textContent = 'Browser tidak mendukung. Buka lewat https.'; return; }
+  if (ok) closePw(true); else { $pwe.textContent = 'Password salah'; $pwi.select(); }
+};
+
+const $up = document.getElementById('upov');
+let upDone = null;
+function askUpload(info){ return new Promise(res => {
+  document.getElementById('upinfo').textContent = info;
+  let s = ''; try { s = localStorage.getItem('salesman')||''; } catch(e){}
+  document.getElementById('upn').value = s; document.getElementById('upk').value = ''; document.getElementById('upe').textContent = '';
+  $up.hidden = false; upDone = res; setTimeout(()=>document.getElementById('upn').focus(),30); }); }
+function closeUp(v){ $up.hidden = true; const r = upDone; upDone = null; if (r) r(v); }
+document.getElementById('upno').onclick = () => closeUp(null);
+document.getElementById('upf').onsubmit = e => { e.preventDefault();
+  const n = document.getElementById('upn').value.trim();
+  if (!n) { document.getElementById('upe').textContent = 'Nama salesman wajib diisi'; return; }
+  try { localStorage.setItem('salesman', n); } catch(_){}
+  closeUp({sales:n, ket:document.getElementById('upk').value.trim()}); };
+
+function home(){
+  $app.innerHTML = '<a class="pusat" href="#pusat-data"><b>PUSAT DATA</b><small>🔒 perlu password</small></a>' +
+    '<h2>Pilih wilayah</h2><p class="sub">Ketuk wilayah untuk melihat daftar kunjungan.</p><div class="grid">' +
+    WILAYAH.map(w => '<a class="tile'+(w==='Padang'?' on':'')+'" href="#'+slug(w)+'"><b>'+esc(w)+'</b><small>'+(w==='Padang'?'12 kecamatan · '+padangTag()+' tagih':'6 hari · '+autoToko(w).length+' toko tagih')+'</small></a>').join('') + '</div>';
+}
+/* ---- Excel, upload & master ---- */
+const fmtTgl = t => t.split('-').reverse().join('-');
+let XL = null;
+async function loadXL(){
+  if (XL) return XL;
+  await new Promise((ok,no) => { const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'; s.onload=ok; s.onerror=no; document.head.appendChild(s); });
+  return XL = window.XLSX;
+}
+const lsUp = () => { try { return JSON.parse(localStorage.getItem('uploads')||'{}'); } catch(e){ return {}; } };
+function saveUpload(u){
+  const all = lsUp(); all[u.id] = u; try { localStorage.setItem('uploads', JSON.stringify(all)); } catch(e){}
+  if (fs) return fs.setDoc(fs.doc(db,'uploads',u.id), u).then(()=>{ setSync('Tersambung ke Firebase','ok'); return true; }).catch(()=>{ setSync('Gagal menyimpan ke Firebase','warn'); return false; });
+  return Promise.resolve(true);
+}
+const cmpUp = (a,b) => a.tgl.localeCompare(b.tgl) || (a.ts-b.ts);
+async function getUploads(bln){
+  if (fs) { try { const s = await fs.getDocs(fs.query(fs.collection(db,'uploads'), fs.where('bln','==',bln))); return s.docs.map(d=>d.data()).sort(cmpUp); } catch(e){ setSync('Gagal membaca upload','warn'); } }
+  return Object.values(lsUp()).filter(u=>u.bln===bln).sort(cmpUp);
+}
+function sheetFrom(blocks){
+  const aoa = [], merges = [], mg = () => merges.push({s:{r:aoa.length-1,c:0}, e:{r:aoa.length-1,c:6}});
+  blocks.forEach(b => {
+    aoa.push([b.head,'','','','','','']); mg();
+    if (b.note) { aoa.push([b.note,'','','','','','']); mg(); }
+    aoa.push(['NO','NAMA TOKO','LATLONG','TRANSAKSI','KETERANGAN','CHECK-IN','KODE TOKO']);
+    b.rows.forEach(r => aoa.push(r)); aoa.push([]);
+  });
+  const ws = XL.utils.aoa_to_sheet(aoa); ws['!merges'] = merges; ws['!cols'] = [{wch:8},{wch:32},{wch:26},{wch:12},{wch:32},{wch:10},{wch:18}];
+  return ws;
+}
+const llOf = a => (a||'').startsWith('geo:') ? a.slice(4) : '';
+const trOf = t => t==='ya' ? 'Ya' : t==='tidak' ? 'Tidak' : '';
+function saveBook(ws, nm, file){ const wb = XL.utils.book_new(); XL.utils.book_append_sheet(wb, ws, nm); XL.writeFile(wb, file); }
+async function loadEJ(){
+  if (window.ExcelJS) return window.ExcelJS;
+  await new Promise((ok,no) => { const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js'; s.onload=ok; s.onerror=no; document.head.appendChild(s); });
+  return window.ExcelJS;
+}
+/* Excel berformat rapi (warna, garis, lebar kolom). Susunan kolom tetap sama supaya bisa di-upload lagi sebagai master. */
+async function saveStyled(blocks, sheetName, file){
+  const EJ = await loadEJ();
+  const wb = new EJ.Workbook(), ws = wb.addWorksheet(sheetName.slice(0,31), {pageSetup:{orientation:'landscape', fitToPage:true, fitToWidth:1, fitToHeight:0, paperSize:9}});
+  ws.columns = [{width:7},{width:34},{width:26},{width:13},{width:34},{width:11},{width:16}];
+  const thin = {style:'thin', color:{argb:'FF9AA9C7'}}, box = {top:thin, left:thin, bottom:thin, right:thin};
+  const fill = c => ({type:'pattern', pattern:'solid', fgColor:{argb:c}});
+  const banner = (text, bg, fg, bold, h) => { const r = ws.addRow([text]); ws.mergeCells(r.number,1,r.number,7);
+    const c = r.getCell(1); c.fill = fill(bg); c.font = {name:'Calibri', size:11, bold, color:{argb:fg}}; c.alignment = {vertical:'middle', horizontal:'left', wrapText:true, indent:1}; r.height = h; return r; };
+  blocks.forEach(b => {
+    banner(b.head, 'FF0A1E4F', 'FFFFFFFF', true, 30);
+    if (b.note) banner(b.note, 'FFFFF4CC', 'FF5A4500', false, 22);
+    const hr = ws.addRow(['NO','NAMA TOKO','LATLONG','TRANSAKSI','KETERANGAN','CHECK-IN','KODE TOKO']); hr.height = 22;
+    hr.eachCell(c => { c.fill = fill('FF1557C8'); c.font = {name:'Calibri', size:11, bold:true, color:{argb:'FFFFFFFF'}}; c.alignment = {vertical:'middle', horizontal:'center'}; c.border = box; });
+    if (!b.rows.length) { const r = ws.addRow(['(belum ada toko)']); ws.mergeCells(r.number,1,r.number,7); const c = r.getCell(1); c.font = {italic:true, color:{argb:'FF7A8499'}}; c.alignment = {horizontal:'center'}; c.border = box; }
+    b.rows.forEach((row, i) => {
+      const r = ws.addRow(row); r.height = 20;
+      r.eachCell({includeEmpty:true}, (c, n) => { if (n>7) return;
+        c.border = box; c.font = {name:'Calibri', size:11}; if (i%2) c.fill = fill('FFF3F7FD');
+        c.alignment = {vertical:'middle', horizontal: (n===2||n===5) ? 'left' : 'center', wrapText: n===2||n===5}; });
+      const tr = String(row[3]||'').toLowerCase();
+      if (tr==='ya') r.getCell(4).font = {name:'Calibri', size:11, bold:true, color:{argb:'FF1F7A4D'}};
+      else if (tr==='tidak') r.getCell(4).font = {name:'Calibri', size:11, bold:true, color:{argb:'FFB42318'}};
+      r.getCell(3).value = String(row[3-1]||''); r.getCell(7).value = String(row[6]||'');
+    });
+    ws.addRow([]);
+  });
+  const buf = await wb.xlsx.writeBuffer();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  a.download = file; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+async function simpanExcel(blocks, nm, file){
+  try { await saveStyled(blocks, nm, file); }
+  catch(e){ console.warn(e); await loadXL(); saveBook(sheetFrom(blocks), nm, file); }
+}
+
+async function unduhUpload(bln, list){
+  if (!list.length) return alert('Belum ada upload di bulan ini.');
+  const blocks = list.map((u,i) => ({
+    head: 'UPLOAD KE-'+(i+1)+' | TANGGAL '+fmtTgl(u.tgl)+' | '+(u.kec ? 'KECAMATAN: '+u.kec : 'WILAYAH: '+u.wil+' | HARI: '+u.hari)+' | MINGGU '+u.minggu+(u.sesuai===false ? ' | JADWAL: TIDAK SESUAI' : u.sesuai ? ' | JADWAL: SESUAI' : '')+' | SALESMAN: '+(u.sales||'-'),
+    note: u.ket ? 'KETERANGAN UPLOAD: '+u.ket : '',
+    rows: u.rows.map((r,j) => [j+1, r.n, llOf(r.a) || r.g, trOf(r.t), r.k, r.h || '-', r.c || ''])
+  }));
+  await simpanExcel(blocks, 'Upload '+bln, 'upload-salesman-'+bln+'.xlsx');
+}
+async function unduhMaster(){
+  const blocks = KEC.map(k => ({head:'DATA MASTER | KECAMATAN: '+k[0]+' | HARI: '+k[2]+' | MINGGU '+k[1], rows:(TOKO[k[0]]||[]).map((x,j)=>[j+1, x[1], x[2]!=null ? x[2]+','+x[3] : '', '', '', '', x[0]||''])}));
+  await simpanExcel(blocks, 'Master', 'data-master-toko.xlsx');
+}
+function clearOverrides(){
+  KEC.forEach(k => {
+    const kid = 'padang-'+slug(k[0]), cur = lsGet(kid);
+    Object.keys(cur).forEach(x => { if (x.startsWith('m_')) delete cur[x]; });
+    try { localStorage.setItem(lsKey(kid), JSON.stringify(cur)); } catch(e){}
+    if (fs) { const d = {}; for (let i=0;i<30;i++) d['m_'+i] = null; fs.setDoc(fs.doc(db,'rute',kid), {d}, {merge:true}).catch(()=>{}); }
+  });
+}
+function simpanMaster(){
+  calcBaris();
+  const j = JSON.stringify(TOKO);
+  try { localStorage.setItem('master', j); } catch(e){}
+  if (fs) fs.setDoc(fs.doc(db,'config','master'), {json:j, ts:Date.now()}).then(()=>setSync('Tersambung ke Firebase','ok')).catch(()=>setSync('Gagal menyimpan master','warn'));
+}
+function setMaster(obj){
+  KEC.forEach(k => { if (!obj[k[0]]) obj[k[0]] = []; });
+  TOKO = obj; simpanMaster(); clearOverrides();
+}
+/* Toko yang transaksi (Ya) saat upload otomatis masuk ke Data Master kecamatannya. */
+async function tambahKeMaster(kec, rows){
+  if (fs) { try { const sn = await fs.getDoc(fs.doc(db,'config','master')); if (sn.exists() && sn.data().json) TOKO = JSON.parse(sn.data().json); } catch(e){} }
+  KEC.forEach(k => { if (!TOKO[k[0]]) TOKO[k[0]] = []; });
+  const list = TOKO[kec]; let n = 0;
+  rows.filter(r => r.t==='ya').forEach(r => {
+    const nm = r.n.trim().toUpperCase(); if (!nm) return;
+    const m = (r.a||'').match(/^geo:(-?[\d.]+),(-?[\d.]+)$/), lat = m ? +m[1] : null, lng = m ? +m[2] : null;
+    const ex = list.find(x => (r.c && x[0]===r.c) || x[1]===nm);
+    if (ex) { if (ex[2]==null && lat!=null) { ex[2]=lat; ex[3]=lng; n++; } return; }
+    const tg = (TAGIHAN.toko||[]).find(t => t.kota==='PDG' && t.nama.toUpperCase()===nm);
+    list.push([r.c || (tg ? tg.kode : ''), nm, lat, lng]); n++;
+  });
+  if (n) simpanMaster();
+  return n;
+}
+async function importMaster(file){
+  await loadXL();
+  const wb = XL.read(await file.arrayBuffer(), {type:'array'}), res = {};
+  const lama = {}; Object.values(TOKO).flat().forEach(x => lama[x[1].toUpperCase()] = x[0]);
+  let cur = null;
+  wb.SheetNames.forEach(sn => XL.utils.sheet_to_json(wb.Sheets[sn], {header:1, defval:''}).forEach(r => {
+    const a = String(r[0]??'').trim();
+    if (/^(UPLOAD|DATA MASTER|WILAYAH)/i.test(a)) {
+      const m = a.match(/KECAMATAN:\s*([^|]+)/i), k = m && KEC.find(x => x[0].toLowerCase() === m[1].trim().toLowerCase());
+      cur = k ? k[0] : null; if (cur && !res[cur]) res[cur] = []; return; }
+    if (!cur || a.toUpperCase()==='NO') return;
+    const nama = String(r[1]??'').trim().toUpperCase(); if (!nama) return;
+    const ll = String(r[2]??'').split(',').map(s => parseFloat(s)), ok = ll.length===2 && ll.every(isFinite);
+    const kd = String(r[6]??'').trim().toUpperCase(), ex = res[cur].find(x => x[1]===nama);
+    if (ex) { if (ok) { ex[2]=ll[0]; ex[3]=ll[1]; } if (kd && !ex[0]) ex[0] = kd; }
+    else res[cur].push([kd||lama[nama]||'', nama, ok?ll[0]:null, ok?ll[1]:null]);
+  }));
+  const kc = Object.keys(res), n = Object.values(res).reduce((s,a)=>s+a.length,0);
+  if (!n) return alert('Tidak ada data toko yang terbaca. Pastikan file hasil unduhan dari Pusat Data.');
+  if (!confirm('Data master akan DIGANTI seluruhnya dengan isi file ini:\n'+n+' toko di '+kc.length+' kecamatan.\nKecamatan yang tidak ada di file akan kosong.\n\nLanjutkan?')) return;
+  setMaster(res); pusatPage(); alert('Master diperbarui: '+n+' toko. Rute kunjungan berikutnya otomatis memakai data ini.');
+}
+
+const draftKids = () => [...KEC.map(k=>'padang-'+slug(k[0])), ...WILAYAH.filter(w=>w!=='Padang').flatMap(w=>HARI.map(h=>slug(w)+'-'+slug(h)))];
+async function bersihkan(bln, list){
+  if (!(await askPw())) return;
+  if (!confirm('HAPUS semua data upload salesman bulan '+bln+' ('+list.length+' upload)?\nPastikan Excel bulan ini sudah diunduh. Tidak bisa dibatalkan.')) return;
+  if (fs) {
+    await Promise.allSettled(list.map(u => fs.deleteDoc(fs.doc(db,'uploads',u.id))));
+    const args = []; for (let w=1; w<=4; w++) for (let i=0; i<30; i++) args.push(new fs.FieldPath('d', bln+'_'+w+'_'+i), fs.deleteField());
+    await Promise.allSettled(draftKids().map(kid => fs.updateDoc(fs.doc(db,'rute',kid), ...args)));
+  }
+  const all = lsUp(); Object.keys(all).forEach(k => { if (all[k].bln===bln) delete all[k]; });
+  try { localStorage.setItem('uploads', JSON.stringify(all)); } catch(e){}
+  for (let i=0;i<localStorage.length;i++){ const key = localStorage.key(i); if (key && key.startsWith('rute:')) { const o = lsGet(key.slice(5)); Object.keys(o).forEach(x => { if (x.startsWith(bln+'_')) delete o[x]; }); try { localStorage.setItem(key, JSON.stringify(o)); } catch(e){} } }
+  alert('Data bulan '+bln+' sudah dibersihkan.'); pusatPage();
+}
+
+/* ============ BACKUP & PEMULIHAN ============ */
+async function kumpulBackup(){
+  const out = {app:'rute-salesman-valvoline', versi:1, waktu:new Date().toISOString(), master:TOKO, tagihan:TAGIHAN, uploads:[], rute:{}};
+  if (fs) {
+    const cfg = async nm => { const sn = await fs.getDoc(fs.doc(db,'config',nm)); return sn.exists() && sn.data().json ? JSON.parse(sn.data().json) : null; };
+    const m = await cfg('master'); if (m) out.master = m;
+    const t = await cfg('tagihan'); if (t) out.tagihan = t;
+    (await fs.getDocs(fs.collection(db,'uploads'))).forEach(d => out.uploads.push(d.data()));
+    (await fs.getDocs(fs.collection(db,'rute'))).forEach(d => { const x = (d.data()||{}).d; if (x && Object.keys(x).length) out.rute[d.id] = x; });
+  } else {
+    out.uploads = Object.values(lsUp());
+    for (let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if (k && k.startsWith('rute:')) { const o = lsGet(k.slice(5)); if (Object.keys(o).length) out.rute[k.slice(5)] = o; } }
+  }
+  out.uploads.sort(cmpUp);
+  return out;
+}
+async function unduhBackup(){
+  const b = await kumpulBackup();
+  const nTk = Object.values(b.master||{}).reduce((n,a)=>n+a.length,0);
+  const tgl = new Date(), p = n => String(n).padStart(2,'0');
+  const nama = 'backup-rute-salesman-'+tgl.getFullYear()+'-'+p(tgl.getMonth()+1)+'-'+p(tgl.getDate())+'_'+p(tgl.getHours())+p(tgl.getMinutes())+'.json';
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(b)], {type:'application/json'}));
+  a.download = nama; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  try { localStorage.setItem('lastBackup', b.waktu); } catch(e){}
+  return {nTk, nUp:b.uploads.length, nRute:Object.keys(b.rute).length, tagih:((b.tagihan||{}).toko||[]).length};
+}
+async function pulihBackup(file){
+  let b; try { b = JSON.parse(await file.text()); } catch(e){ return alert('File tidak bisa dibaca. Pilih file backup .json dari aplikasi ini.'); }
+  if (!b || b.app!=='rute-salesman-valvoline' || !b.master) return alert('Ini bukan file backup aplikasi Rute Kunjungan Salesman.');
+  if (!(await askPw())) return;
+  const nTk = Object.values(b.master).reduce((n,a)=>n+a.length,0), nUp = (b.uploads||[]).length, nRute = Object.keys(b.rute||{}).length;
+  if (!confirm('PULIHKAN data dari backup tanggal '+String(b.waktu||'').slice(0,10)+'?\n\n• Master: '+nTk+' toko (menggantikan master sekarang)\n• Tagihan: '+(((b.tagihan||{}).toko||[]).length)+' toko (menggantikan tagihan sekarang)\n• Upload salesman: '+nUp+' (yang ID-nya sama ditimpa)\n• Isian tabel: '+nRute+' halaman\n\nLanjutkan?')) return;
+  KEC.forEach(k => { if (!b.master[k[0]]) b.master[k[0]] = []; });
+  TOKO = b.master; simpanMaster();
+  if (b.tagihan) setTagihan(b.tagihan);
+  const jobs = [];
+  (b.uploads||[]).forEach(u => jobs.push(saveUpload(u)));
+  Object.entries(b.rute||{}).forEach(([kid,d]) => { try { localStorage.setItem(lsKey(kid), JSON.stringify(d)); } catch(e){} if (fs) jobs.push(fs.setDoc(fs.doc(db,'rute',kid), {d}).catch(()=>false)); });
+  await Promise.allSettled(jobs);
+  alert('Pemulihan selesai.'); pusatPage();
+}
+function backupView(body){
+  let last = ''; try { last = localStorage.getItem('lastBackup')||''; } catch(e){}
+  const hari = last ? Math.floor((Date.now()-new Date(last))/864e5) : null;
+  const info = !last ? 'Perangkat ini belum pernah mengunduh backup.' : 'Backup terakhir dari perangkat ini: '+fmtTgl(last.slice(0,10))+' ('+(hari===0?'hari ini':hari+' hari lalu')+').';
+  body.innerHTML = '<p class="sub">Backup menyimpan <b>semua data</b> ke satu file: Data Master, Tagihan, seluruh upload salesman (semua bulan), dan isian tabel. Simpan file ini di tempat aman (Google Drive, flashdisk, atau kirim ke email sendiri) supaya data tetap ada walaupun Firebase bermasalah. Disarankan unduh <b>seminggu sekali</b> dan sebelum Bersihkan data bulan ini.</p>' +
+    '<p class="sub" id="bkinfo" style="'+(!last||hari>7?'color:#b42318;font-weight:600':'')+'">'+esc(info)+(last&&hari>7?' Sudah lebih dari seminggu, sebaiknya unduh lagi.':'')+'</p>' +
+    '<div class="bar"><button class="act pri" id="bkdl">⬇ Unduh backup semua data</button><button class="act" id="bkup">⬆ Pulihkan dari file backup</button><input type="file" id="bkf" accept=".json,application/json" hidden></div>' +
+    '<p class="sub">Pulihkan meminta password. Master dan tagihan diganti sesuai isi file; upload salesman dan isian tabel yang sudah ada tidak dihapus (hanya yang ID-nya sama yang ditimpa).</p>';
+  const btn = document.getElementById('bkdl');
+  btn.onclick = async () => { btn.disabled = true; btn.textContent = 'Menyiapkan backup…';
+    try { const r = await unduhBackup(); alert('Backup terunduh.\n\nIsi: '+r.nTk+' toko master, '+r.tagih+' toko tagihan, '+r.nUp+' upload salesman, '+r.nRute+' halaman isian.\n\nSimpan file di tempat aman.'); pusatPage(); }
+    catch(e){ alert('Backup gagal: '+(e&&e.message||e)+'\nCek koneksi internet lalu coba lagi.'); btn.disabled = false; btn.textContent = '⬇ Unduh backup semua data'; } };
+  const f = document.getElementById('bkf'); document.getElementById('bkup').onclick = () => f.click();
+  f.onchange = () => { if (f.files[0]) pulihBackup(f.files[0]).catch(e=>alert('Pemulihan gagal: '+(e&&e.message||e))); f.value = ''; };
+}
+let pusatTab = 'master', upBln = infoHariIni().bulan;
+function pusatPage(){
+  $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a><h2>Pusat Data</h2><div class="tabs">' +
+    '<button data-pt="master" aria-pressed="'+(pusatTab==='master')+'">Data Master</button><button data-pt="upload" aria-pressed="'+(pusatTab==='upload')+'">Upload Salesman</button><button data-pt="tagihan" aria-pressed="'+(pusatTab==='tagihan')+'">Tagihan Toko</button><button data-pt="backup" aria-pressed="'+(pusatTab==='backup')+'">Backup</button></div><div id="pbody"></div>';
+  $app.querySelectorAll('[data-pt]').forEach(b => b.onclick = () => { pusatTab = b.dataset.pt; pusatPage(); });
+  const body = document.getElementById('pbody');
+  pusatTab==='master' ? masterView(body) : pusatTab==='upload' ? uploadView(body) : pusatTab==='backup' ? backupView(body) : tagihanView(body);
+}
+function nextVisits(hari, grup, n=2){
+  const out = [], d = new Date(); d.setHours(12,0,0,0);
+  for (let i=0; i<70 && out.length<n; i++) { const x = new Date(d); x.setDate(d.getDate()+i); const f = infoHariIni(x);
+    if (f.hari===hari && f.grup===grup) out.push(new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short'}).format(x)); }
+  return out.join(', ');
+}
+function masterView(body){
+  const total = Object.values(TOKO).reduce((n,a)=>n+a.length,0);
+  let no = 0;
+  const rows = KEC.map(([nama,mm,hari]) => { const t = TOKO[nama]||[]; if (!t.length) return '';
+    const nv = nextVisits(hari, mm);
+    return '<tr class="grp"><td colspan="10">'+esc(nama)+' · '+hari+' · Minggu '+mm+' · '+t.length+' toko</td></tr>' +
+      t.map((x,ix) => '<tr data-s="'+esc((x[1]+' '+(x[0]||'')+' '+nama+' '+hari).toLowerCase())+'"><td>'+(++no)+'</td><td class="l">'+esc(x[1])+'</td><td class="kd"><input class="kdi" value="'+esc(x[0]||'')+'" data-kec="'+esc(nama)+'" data-n="'+esc(x[1])+'" placeholder="isi kode" autocomplete="off" autocapitalize="characters" style="width:100%;font:inherit;text-align:center;text-transform:uppercase;padding:6px 4px;border:1.5px solid var(--soft);border-radius:4px;background:#fff"></td><td class="l">'+esc(nama)+'</td><td>'+hari+'</td><td>'+mm+'</td><td>'+nv+'</td><td>'+(x[2]??'')+'</td><td>'+(x[3]??'')+'</td>' +
+        '<td>'+(x[2]!=null ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl('geo:'+x[2]+','+x[3]))+'">📍 Peta</a>' : '-')+'</td></tr>').join(''); }).join('');
+  body.innerHTML = '<p class="sub">Data master: '+total+' toko. Toko yang transaksi (Ya) saat salesman upload otomatis masuk ke sini, di kecamatannya, dan tampil lagi di jadwal kunjungan berikutnya. Kolom Hari, Minggu, dan Kunjungan berikutnya mengikuti jadwal kecamatan.</p>' +
+    '<div class="bar"><button class="act" id="mdl">⬇ Unduh master (Excel)</button><button class="act pri" id="mup">⬆ Upload Excel jadi master</button><input type="file" id="mf" accept=".xlsx,.xls" hidden></div>' +
+    '<input id="ms" type="search" placeholder="Cari nama toko, kecamatan, atau hari (misal: kamis)…" autocomplete="off" style="width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px;margin-bottom:10px">' +
+    '<div class="scroll pd"><table style="min-width:1000px"><caption>Data master toko</caption><thead><tr><th style="width:48px">No.</th><th>Nama toko</th><th style="width:110px">Kode toko</th><th>Kecamatan</th><th style="width:80px">Hari</th><th style="width:70px">Minggu</th><th style="width:130px">Kunjungan berikutnya</th><th style="width:100px">Latitude</th><th style="width:100px">Longitude</th><th style="width:100px">Peta</th></tr></thead><tbody>'+(rows||'<tr><td colspan="10" class="empty">Master kosong.</td></tr>')+'</tbody></table></div>';
+  body.querySelectorAll('input.kdi').forEach(inp => { inp.onchange = async () => {
+    const val = inp.value.trim().toUpperCase(), kec = inp.dataset.kec, nm = inp.dataset.n;
+    if (fs) { try { const sn = await fs.getDoc(fs.doc(db,'config','master')); if (sn.exists() && sn.data().json) TOKO = JSON.parse(sn.data().json); } catch(e){} }
+    const arr = TOKO[kec] || [], row = arr.find(x => x[1]===nm);
+    if (!row) { inp.style.borderColor = '#b42318'; return alert('Toko tidak ditemukan di master. Muat ulang halaman.'); }
+    const dup = val && Object.entries(TOKO).flatMap(([k,a]) => a.map(x => [k,x])).find(([k,x]) => x!==row && x[0]===val);
+    if (dup) { inp.value = row[0]||''; return alert('Kode '+val+' sudah dipakai toko '+dup[1][1]+' ('+dup[0]+').'); }
+    row[0] = val; inp.value = val; simpanMaster();
+    const tr = inp.closest('tr'); if (tr) tr.dataset.s = (nm+' '+val+' '+kec).toLowerCase()+' '+(tr.dataset.s||'');
+    inp.style.borderColor = '#1f7a4d'; setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+  }; });
+  document.getElementById('ms').oninput = e => { const v = e.target.value.trim().toLowerCase();
+    body.querySelectorAll('tbody tr').forEach(tr => { tr.hidden = tr.classList.contains('grp') ? !!v : (!!v && !(tr.dataset.s||'').includes(v)); }); };
+  document.getElementById('mdl').onclick = () => unduhMaster().catch(()=>alert('Gagal memuat pustaka Excel. Cek koneksi internet.'));
+  const f = document.getElementById('mf');
+  document.getElementById('mup').onclick = () => f.click();
+  f.onchange = () => { if (f.files[0]) importMaster(f.files[0]).catch(()=>alert('File tidak bisa dibaca.')); f.value = ''; };
+}
+const NAMA_HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const hariDari = tgl => NAMA_HARI[new Date(tgl+'T12:00:00').getDay()];
+function setTagihan(o){
+  TAGIHAN = o; calcTag();
+  const j = JSON.stringify(o); try { localStorage.setItem('tagihan', j); } catch(e){}
+  if (fs) fs.setDoc(fs.doc(db,'config','tagihan'), {json:j, ts:Date.now()}).then(()=>setSync('Tersambung ke Firebase','ok')).catch(()=>setSync('Gagal menyimpan tagihan','warn'));
+}
+async function importTagihan(file){
+  await loadXL();
+  const wb = XL.read(await file.arrayBuffer(), {type:'array'}), rows = XL.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header:1, defval:''});
+  const hi = rows.findIndex(r => r.some(c => String(c).trim().toLowerCase()==='id pelanggan'));
+  if (hi<0) return alert('Kolom "ID Pelanggan" tidak ditemukan. Pastikan ini Excel Faktur Belum Lunas dari Accurate.');
+  const h = rows[hi].map(c => String(c).trim().toLowerCase()), ci = h.indexOf('id pelanggan'), ni = h.indexOf('pelanggan'), si = h.indexOf('sisa piutang');
+  if (ni<0 || si<0) return alert('Kolom "Pelanggan" atau "Sisa Piutang" tidak ditemukan.');
+  const m = new Map();
+  rows.slice(hi+1).forEach(r => {
+    const kode = String(r[ci]).trim().toUpperCase(); if (!/^[A-Z0-9]{3}-/.test(kode)) return;
+    const o = m.get(kode) || {kode, kota:kode.split('-')[0], nama:String(r[ni]).replace(/\s*\(.*\)\s*$/,'').replace(/\s+/g,' ').trim(), sisa:0};
+    o.sisa += Number(r[si])||0; m.set(kode, o); });
+  const all = [...m.values()], toko = all.filter(o => o.sisa>0).map(({kode,kota,nama,sisa}) => ({kode,kota,nama,sisa:Math.round(sisa)}));
+  if (!toko.length) return alert('Tidak ada toko dengan sisa piutang di file ini.');
+  if (!confirm('Daftar tagihan akan DIGANTI dengan isi file ini:\n'+toko.length+' toko punya tagihan'+(all.length>toko.length ? ' ('+(all.length-toko.length)+' toko diabaikan karena sisa piutang bersihnya 0 atau minus)' : '')+'.\n\nLanjutkan?')) return;
+  const sel = {}; toko.forEach(t => { if ((TAGIHAN.sel||{})[t.kode]) sel[t.kode] = TAGIHAN.sel[t.kode]; });
+  const d = new Date(), p2 = n => String(n).padStart(2,'0');
+  setTagihan({tgl:d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()), file:file.name, toko, sel});
+  pusatPage();
+}
+function tagihanView(body){
+  const T = (TAGIHAN.toko||[]).slice().sort((a,b)=>a.kota.localeCompare(b.kota) || a.nama.localeCompare(b.nama));
+  const inMaster = {}; KEC.forEach(k => (TOKO[k[0]]||[]).forEach(x => { if (x[0]) inMaster[x[0]] = k[0]; }));
+  const per = {}; T.forEach(t => { const w = wilayahOf(t) || '(belum ditentukan)'; const p = per[w] || (per[w] = {n:0, s:0}); p.n++; p.s += t.sisa||0; });
+  const pdgMiss = T.filter(t => t.kota==='PDG' && !inMaster[t.kode]).length, unk = T.filter(t => !KODE_WIL[t.kota]).length, blm = T.filter(t => KODE_WIL[t.kota] && !wilayahOf(t)).length;
+  const rows = T.map((t,i) => {
+    const c = KODE_WIL[t.kota]; let wil;
+    if (!c) wil = '<span style="color:#b42318">kode kota tidak dikenal</span>';
+    else if (c.length===1) wil = esc(c[0]);
+    else wil = '<select data-sel="'+esc(t.kode)+'"><option value="">Pilih wilayah</option>'+c.map(w => '<option'+((TAGIHAN.sel||{})[t.kode]===w?' selected':'')+'>'+esc(w)+'</option>').join('')+'</select>';
+    const mk = t.kota==='PDG' ? (inMaster[t.kode] ? esc(inMaster[t.kode]) : '<span style="color:#b42318">belum ada di master</span>') : '-';
+    return '<tr data-s="'+esc((t.kode+' '+t.nama+' '+t.kota).toLowerCase())+'"><td>'+(i+1)+'</td><td class="l">'+esc(t.kode)+'</td><td class="l">'+esc(t.nama)+'</td><td>'+esc(t.kota)+'</td><td>'+wil+'</td><td>'+mk+'</td><td style="text-align:right">'+rp(t.sisa)+'</td></tr>'; }).join('');
+  body.innerHTML = '<p class="sub">'+(T.length ? T.length+' toko punya tagihan · total '+rp(T.reduce((n,t)=>n+(t.sisa||0),0))+' · file: '+esc(TAGIHAN.file||'-')+' · diupload '+fmtTgl(TAGIHAN.tgl||'')+'<br>'+Object.entries(per).map(([w,v])=>esc(w)+': '+v.n+' toko, '+rp(v.s)).join('<br>') : 'Belum ada data tagihan. Upload Excel Faktur Belum Lunas dari Accurate.')+'</p>' +
+    (pdgMiss ? '<p class="sub" style="color:#b42318">⚠ '+pdgMiss+' toko Padang yang punya tagihan belum ada di master, jadi belum muncul di rute kecamatan. Tambahkan ke master lewat Excel (isi kolom KODE TOKO).</p>' : '') +
+    (unk ? '<p class="sub" style="color:#b42318">⚠ '+unk+' toko memakai kode kota yang belum dikenal, jadi tidak muncul di rute.</p>' : '') +
+    (blm ? '<p class="sub" style="color:#b42318">⚠ '+blm+' toko masih perlu dipilih wilayahnya (kolom Wilayah).</p>' : '') +
+    '<div class="bar"><button class="act pri" id="tup">⬆ Upload Excel tagihan</button><button class="act red" id="tclr">Kosongkan tagihan</button><input type="file" id="tf" accept=".xlsx,.xls" hidden></div>' +
+    '<input id="ts" type="search" placeholder="Cari kode, nama toko, atau kota…" autocomplete="off" style="width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px;margin-bottom:10px">' +
+    '<div class="scroll pd"><table style="min-width:760px"><caption>Toko yang punya tagihan</caption><thead><tr><th style="width:48px">No.</th><th style="width:170px">Kode toko</th><th>Nama toko</th><th style="width:70px">Kota</th><th style="width:170px">Wilayah</th><th style="width:150px">Kecamatan (master)</th><th style="width:140px">Sisa tagihan</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7" class="empty">Belum ada data.</td></tr>')+'</tbody></table></div>';
+  const f = document.getElementById('tf');
+  document.getElementById('tup').onclick = () => f.click();
+  f.onchange = () => { if (f.files[0]) importTagihan(f.files[0]).catch(()=>alert('File tidak bisa dibaca atau pustaka Excel gagal dimuat.')); f.value = ''; };
+  document.getElementById('tclr').onclick = () => { if (confirm('Kosongkan semua data tagihan?')) { setTagihan({tgl:'', file:'', toko:[], sel:{}}); pusatPage(); } };
+  document.getElementById('ts').oninput = e => { const v = e.target.value.trim().toLowerCase(); body.querySelectorAll('tbody tr').forEach(tr => { tr.hidden = !!v && !(tr.dataset.s||'').includes(v); }); };
+  body.querySelectorAll('[data-sel]').forEach(sl => sl.onchange = () => { const sel = {...(TAGIHAN.sel||{})}; if (sl.value) sel[sl.dataset.sel] = sl.value; else delete sel[sl.dataset.sel]; setTagihan({...TAGIHAN, sel}); tagihanView(body); });
+}
+async function uploadView(body){
+  body.innerHTML = '<div class="tabs"><label class="bln">Bulan <input type="month" id="ubln" value="'+upBln+'"></label></div><p class="sub" id="usum">Memuat…</p>' +
+    '<div class="bar"><button class="act pri" id="udl">⬇ Unduh Excel bulan ini</button><button class="act red" id="uclr">Bersihkan data bulan ini</button></div><div id="ulist"></div>';
+  document.getElementById('ubln').onchange = e => { if (e.target.value) { upBln = e.target.value; uploadView(body); } };
+  const list = await getUploads(upBln);
+  const box = document.getElementById('ulist'); if (!box) return;
+  const ya = list.reduce((n,u)=>n+u.rows.filter(r=>r.t==='ya').length,0), tk = list.reduce((n,u)=>n+u.rows.length,0);
+  document.getElementById('usum').textContent = list.length+' upload · '+tk+' kunjungan toko · '+ya+' transaksi Ya';
+  document.getElementById('udl').onclick = () => unduhUpload(upBln, list).catch(()=>alert('Gagal memuat pustaka Excel. Cek koneksi internet.'));
+  document.getElementById('uclr').onclick = () => bersihkan(upBln, list);
+  box.innerHTML = list.length ? '<div class="scroll pd"><table><caption>Daftar upload</caption><thead><tr><th style="width:90px">Upload ke</th><th>Tanggal</th><th>Lokasi</th><th>Salesman</th><th>Toko</th><th>Check-in</th><th>Transaksi Ya</th><th>Tidak</th></tr></thead><tbody>' +
+    list.map((u,i)=>'<tr><td>'+(i+1)+'</td><td>'+fmtTgl(u.tgl)+'</td><td class="l">'+esc(u.kec ? u.kec : u.wil+' ('+u.hari+')')+(u.sesuai===false?' ⚠ di luar jadwal':'')+(u.ket?'<br><small>'+esc(u.ket)+'</small>':'')+'</td><td class="l">'+esc(u.sales||'-')+'</td><td>'+u.rows.length+'</td><td>'+u.rows.filter(r=>r.g).length+'</td><td>'+u.rows.filter(r=>r.t==='ya').length+'</td><td>'+u.rows.filter(r=>r.t==='tidak').length+'</td></tr>').join('') +
+    '</tbody></table></div>' : '<p class="empty">Belum ada upload di bulan ini.</p>';
+}
+function kecList(){
+  const grup = m => '<h3 class="wk">Minggu '+m+'</h3><div class="grid">' + HARI.map(h => { const k = KEC.find(x=>x[1]===m && x[2]===h); if (!k) return '';
+    const c = (TOKO[k[0]]||[]).length, tg = (TOKO[k[0]]||[]).filter(x=>TAGSET.has(x[0])).length;
+    return '<a class="tile'+(c?'':' kosong')+'" data-m="'+m+'" data-h="'+h+'" href="#padang/'+slug(k[0])+'"><span class="hr">'+h+'</span><b>'+esc(k[0])+'</b><small>'+(c?c+' toko'+(tg?' · '+tg+' tagih':''):'belum ada data')+'</small></a>'; }).join('') + '</div>';
+  $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a><h2>Padang</h2><p class="sub">12 kecamatan, dikunjungi 2 kali sebulan. Ketuk kecamatan untuk mengisi kunjungan.</p><p class="sub" id="hi"></p>' + grup('1 / 3') + grup('2 / 4'); renderTgl();
+}
+function hariList(w){
+  const now = infoHariIni().hari;
+  $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a><h2>'+esc(w)+'</h2><p class="sub">Pilih hari kunjungan. Toko yang punya tagihan ('+autoToko(w).length+' toko) terisi otomatis.</p><div class="grid">' +
+    HARI.map(h => '<a class="tile'+(h===now?' now':'')+'" href="#'+slug(w)+'/'+slug(h)+'"><span class="hr">kunjungan</span><b>'+h+'</b><small>buka daftar toko</small></a>').join('') + '</div>';
+}
+
+let minggu = null, bulan = infoHariIni().bulan;
+const q = (tr,f) => tr.querySelector('[data-f='+f+']');
+const geoUrl = g => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(g.slice(4));
+function renderAl(tr){
+  const a = tr.dataset.a || '', td = tr.querySelector('.al');
+  td.innerHTML = a.startsWith('geo:')
+    ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl(a))+'">📍 Buka Google Maps</a> <button type="button" class="mini" data-x="1" aria-label="Hapus lokasi">×</button>'
+    : '<span class="sub">terisi saat check-in</span>';
+  renderCk(tr);
+}
+function renderCk(tr){
+  const g = tr.dataset.g || '', h = tr.dataset.h || '', td = tr.querySelector('.ck');
+  td.innerHTML = g
+    ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl('geo:'+g))+'">✔ '+esc(h)+'</a>'
+    : '<button type="button" class="mini gps" data-ci="1">📍 Check-in</button>';
+  q(tr,'t').disabled = q(tr,'k').disabled = !g;
+}
+
+function tabel(cfg){
+  const {kid, back, backLabel, caption, weeks, toko} = cfg;
+  const NR = Math.max(BARIS, toko.length);
+  if (!weeks.includes(minggu)) { const wk = String(infoHariIni().n); minggu = weeks.includes(wk) ? wk : weeks[cfg.def||0]; }
+  const html = '<a class="back" href="'+back+'">‹ '+esc(backLabel)+'</a><div class="tabs" role="group" aria-label="Minggu kunjungan">' +
+    weeks.map(w=>'<button data-w="'+w+'" aria-pressed="'+(w===minggu)+'">Minggu '+w+'</button>').join('') +
+    '<label class="bln">Bulan <input type="month" id="bln" value="'+bulan+'"></label></div>' +
+    '<div class="scroll"><table><caption>'+esc(caption)+'</caption><thead><tr><th style="width:48px">No.</th><th style="min-width:150px">nama toko</th><th style="min-width:190px">Alamat</th><th style="width:120px">Check-in</th><th style="width:130px">Sisa tagihan</th><th style="width:130px">Transaksi</th><th style="min-width:160px">Keterangan</th></tr></thead><tbody>' +
+    Array.from({length:NR},(_,i)=>'<tr data-i="'+i+'"><td>'+(i+1)+'</td>' +
+      '<td><input class="k" data-f="n" autocomplete="off" aria-label="Nama toko '+(i+1)+'"></td><td class="al"></td><td class="ck"></td><td class="sg"></td>' +
+      '<td><select data-f="t" aria-label="Transaksi '+(i+1)+'"><option value="">Pilih</option><option value="ya">Ya</option><option value="tidak">Tidak</option></select></td>' +
+      '<td><input class="k" data-f="k" aria-label="Keterangan '+(i+1)+'"></td></tr>').join('') +
+    '</tbody></table></div>' +
+    '<div class="bar"><button type="button" class="act pri" id="up">⬆ Upload kunjungan hari ini</button><span id="ups" class="sub"></span></div>' +
+    '<p class="foot">Setelah selesai kunjungan hari ini, tekan Upload agar data masuk ke Pusat Data. Maksimal '+NR+' kunjungan per hari. Tekan Check-in saat berada di toko: titik GPS dan jam tersimpan. Kolom Transaksi dan Keterangan baru bisa diisi setelah check-in. Lokasi dan nama toko tersimpan untuk minggu dan bulan berikutnya. Semua isian tersimpan otomatis.</p>';
+  $app.innerHTML = html;
+  $app.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { minggu = b.dataset.w; tabel(cfg); });
+  document.getElementById('bln').onchange = e => { if (e.target.value) { bulan = e.target.value; tabel(cfg); } };
+
+  const trs = [...$app.querySelectorAll('tbody tr')];
+  const dflt = i => toko[i] ? {n:toko[i][1].toLowerCase(), a:(toko[i][2]!=null && toko[i][3]!=null ? 'geo:'+toko[i][2]+','+toko[i][3] : ''), t:'', k:''} : {};
+  const fill = d => {
+  const used = new Set();
+  trs.forEach((_,i) => { const x = d[bulan+'_'+minggu+'_'+i]; if (x && x.n && x.n.trim()) used.add(x.n.trim().toUpperCase()); });
+  trs.forEach((tr,i) => {
+    if (tr.contains(document.activeElement)) return;
+    const mst = null, dr = d[bulan+'_'+minggu+'_'+i], cd = toko[i] ? toko[i][0] : '';
+    const v = (dr && (!cfg.auto || (dr.c||'')===cd)) ? dr : (mst ? {n:mst.n, a:mst.a, t:'', k:''} : (!cfg.auto && !dr && toko[i] && used.has(toko[i][1].toUpperCase()) ? {} : dflt(i)));
+    q(tr,'n').value = v.n||''; q(tr,'k').value = v.k||'';
+    const t = q(tr,'t'); t.value = v.t||''; t.dataset.v = t.value;
+    tr.dataset.a = v.a||''; tr.dataset.g = v.g||''; tr.dataset.h = v.h||''; tr.dataset.c = (v===dr ? (dr.c||'') : cd); renderAl(tr);
+    const tg = !!(toko[i] && TAGSET.has(toko[i][0]) && (v.n||'').trim().toUpperCase()===toko[i][1].toUpperCase());
+    tr.classList.toggle('tag', tg); tr.querySelector('.sg').textContent = tg ? rp(TAGSISA[toko[i][0]]) : ''; tr.cells[0].innerHTML = (i+1)+(tg ? '<br><small style="color:#b42318;font-weight:700">TAGIH</small>' : '');
+  });
+  };
+  listen(kid, fill);
+
+  const rowData = tr => ({n:q(tr,'n').value, a:tr.dataset.a||'', g:tr.dataset.g||'', h:tr.dataset.h||'', c:tr.dataset.c||'', t:q(tr,'t').value, k:q(tr,'k').value});
+  const commit = (tr, bl, mg) => {
+    const r = rowData(tr);
+    save(kid, bl+'_'+mg+'_'+tr.dataset.i, r);
+  };
+  const timers = new Map();
+  const queue = tr => { const bl = bulan, mg = minggu; clearTimeout(timers.get(tr)); timers.set(tr, setTimeout(()=>{ timers.delete(tr); commit(tr,bl,mg); }, 500)); };
+  const tb = $app.querySelector('tbody');
+  document.getElementById('up').onclick = async () => {
+    const ub = document.getElementById('up'), us = document.getElementById('ups');
+    [...timers.keys()].forEach(tr => { clearTimeout(timers.get(tr)); commit(tr, bulan, minggu); }); timers.clear();
+    const rows = trs.map((tr,i) => ({...rowData(tr), c:(toko[i] && q(tr,'n').value.trim().toUpperCase()===toko[i][1].toUpperCase()) ? toko[i][0] : ''})).filter(r => r.n.trim()).map(r => ({n:r.n.trim().toUpperCase(), a:r.a, g:r.g, h:r.h, c:r.c, t:r.t, k:r.k.trim()}));
+    if (!rows.length) return alert('Belum ada toko yang diisi.');
+    const d = new Date(), p2 = n => String(n).padStart(2,'0'), tgl = d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+    const belum = rows.filter(r => !r.g).length, inf = infoHariIni(d), kk = cfg.kec ? KEC.find(x => x[0]===cfg.kec) : null;
+    const sesuai = kk ? (inf.hari===kk[2] && inf.grup===kk[1]) : null;
+    let info = rows.length+' toko, tanggal '+fmtTgl(tgl)+'. Upload ulang oleh salesman yang sama di kecamatan dan minggu yang sama pada hari ini akan menimpa upload sebelumnya.';
+    if (belum) info += ' '+belum+' toko belum check-in.';
+    if (sesuai===false) info += ' PERHATIAN: hari ini bukan jadwal kecamatan ini ('+kk[2]+', minggu '+kk[1]+').';
+    const f = await askUpload(info); if (!f) return;
+    ub.disabled = true; us.textContent = 'Mengirim…';
+    const u = {id:tgl+'_'+kid+'_m'+minggu+'_'+(slug(f.sales)||'x'), tgl, bln:tgl.slice(0,7), kid, kec:cfg.kec||'', wil:cfg.wil||'', hari:cfg.hari||'', minggu, sales:f.sales, ket:f.ket, sesuai, ts:Date.now(), rows};
+    const ok = await saveUpload(u);
+    const nb = (ok && cfg.kec) ? await tambahKeMaster(cfg.kec, rows) : 0;
+    ub.disabled = false;
+    us.textContent = ok ? '✔ Terupload '+rows.length+' toko oleh '+f.sales+' ('+fmtTgl(tgl)+' '+p2(d.getHours())+':'+p2(d.getMinutes())+')'+(nb ? ' · '+nb+' toko masuk Data Master' : '') : 'Gagal upload, coba lagi.';
+  };
+
+  const onEdit = e => {
+    const tr = e.target.closest('tr'), f = e.target.dataset.f; if (!tr || !f) return;
+    if (f==='t') e.target.dataset.v = e.target.value;
+    queue(tr);
+  };
+  tb.addEventListener('input', onEdit);
+  tb.addEventListener('change', e => { if (e.target.dataset.f === 't') onEdit(e); });
+  tb.addEventListener('focusout', e => {
+    const tr = e.target.closest('tr');
+    if (tr && timers.has(tr)) { clearTimeout(timers.get(tr)); timers.delete(tr); commit(tr, bulan, minggu); }
+  });
+  tb.addEventListener('click', e => {
+    const tr = e.target.closest('tr'); if (!tr) return;
+    if (e.target.dataset.x) { tr.dataset.a = ''; renderAl(tr); commit(tr, bulan, minggu); }
+    if (e.target.dataset.ci) {
+      const btn = e.target, bl = bulan, mg = minggu;
+      if (!q(tr,'n').value.trim()) return alert('Isi nama toko dulu sebelum check-in.');
+      if (!navigator.geolocation) return alert('Perangkat ini tidak mendukung lokasi.');
+      btn.disabled = true; btn.textContent = 'Mencari…';
+      navigator.geolocation.getCurrentPosition(
+        p => { const ll = p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6), d = new Date(), p2 = n => String(n).padStart(2,'0');
+          tr.dataset.g = ll; tr.dataset.h = p2(d.getHours())+':'+p2(d.getMinutes());
+          if (!(tr.dataset.a||'').startsWith('geo:')) tr.dataset.a = 'geo:'+ll;
+          renderAl(tr); commit(tr, bl, mg); },
+        () => { btn.disabled = false; btn.textContent = '📍 Check-in'; alert('Lokasi tidak bisa diambil. Aktifkan GPS dan izin lokasi untuk web ini.'); },
+        {enableHighAccuracy:true, timeout:20000, maximumAge:0});
+    }
+  });
+}
+function detail(ks){
+  const k = KEC.find(x=>slug(x[0])===ks); if (!k) return kecList();
+  const [nama, mm, hari] = k;
+  tabel({kid:'padang-'+ks, back:'#padang', backLabel:'Padang', caption:nama.toLowerCase()+' ('+hari.toLowerCase()+', Minggu '+mm+')', weeks:mm.split(' / '), def:0, kec:nama, toko:TOKO[nama]||[]});
+}
+function detailHari(w, h){
+  tabel({kid:slug(w)+'-'+slug(h), back:'#'+slug(w), backLabel:w, caption:w.toLowerCase()+' ('+h.toLowerCase()+')', weeks:['1','2','3','4'], def:3, wil:w, hari:h, toko:autoToko(w), auto:true});
+}
+
+function route(){
+  if (unsub) { unsub(); unsub = null; }
+  let h = ''; try { h = decodeURIComponent(location.hash.slice(1)); } catch(e){}
+  const [w, ks] = h.split('/');
+  window.scrollTo(0,0);
+  if (!$pw.hidden) closePw(false);
+  if (!$up.hidden) closeUp(null);
+  if (w !== 'pusat-data') pusatOk = false;
+  if (!w) return home();
+  if (w==='pusat-data') {
+    if (pusatOk) return pusatPage();
+    home();
+    askPw().then(ok => { if (ok) { pusatOk = true; pusatPage(); window.scrollTo(0,0); } else if (location.hash==='#pusat-data') location.hash = ''; });
+    return;
+  }
+  if (w==='padang') return ks ? detail(ks) : kecList();
+  const nm = WILAYAH.find(x=>slug(x)===w); if (!nm) return home();
+  if (!ks) return hariList(nm);
+  const hr = HARI.find(x=>slug(x)===ks); return hr ? detailHari(nm, hr) : hariList(nm);
+}
+window.addEventListener('hashchange', route);
+route();
+renderTgl();
+setInterval(renderTgl, 60000);
+initFirebase().then(async () => {
+  if (!fs) return;
+  let ch = false;
+  for (const nm of ['master','tagihan']) {
+    try {
+      const sn = await fs.getDoc(fs.doc(db,'config',nm)), j = sn.exists() ? sn.data().json : null;
+      if (j && j !== localStorage.getItem(nm)) {
+        const o = JSON.parse(j);
+        if (nm==='master') { TOKO = o; calcBaris(); } else { TAGIHAN = o; calcTag(); }
+        try { localStorage.setItem(nm, j); } catch(e){}
+        ch = true;
+      }
+    } catch(e){}
+  }
+  if (ch) { const ae = document.activeElement; if (!(ae && ae.closest && ae.closest('tbody'))) route(); }
+});
+</script>
+</body>
+</html>
