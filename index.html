@@ -115,6 +115,7 @@ tr.tag td:first-child{box-shadow:inset 4px 0 0 #d92d20;background:#fff1f0}
 tr.lun td:first-child{box-shadow:inset 4px 0 0 #1f7a4d;background:#effaf3}
 td input.k[data-f=n]:disabled{color:var(--ink);-webkit-text-fill-color:var(--ink)}
 @media print{header.top,.tabs,.back,.sync{display:none}}
+#kunci{position:fixed;inset:0;z-index:40;background:var(--navy);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}#kunci[hidden]{display:none}#kunci h2{margin:0;font:700 clamp(26px,7vw,40px)/1.1 "Barlow Condensed",sans-serif}#kunci p{margin:0;max-width:420px;opacity:.85}#kunci .ic{font-size:56px;line-height:1}
 </style>
 </head>
 <body>
@@ -124,6 +125,7 @@ td input.k[data-f=n]:disabled{color:var(--ink);-webkit-text-fill-color:var(--ink
 </div></header>
 <main class="wrap" id="app"></main>
 
+<div id="kunci" hidden><div class="ic">⏻</div><h2>Aplikasi sedang dihentikan</h2><p>Aplikasi tidak bisa dipakai untuk sementara. Hubungi admin untuk mengaktifkan kembali.</p><button type="button" class="act" id="aktifkan">⏻ Aktifkan kembali</button></div>
 <div class="ov" id="pw" hidden><form id="pwf" autocomplete="off"><h3>Pusat Data</h3><p>Masukkan password untuk membuka.</p><input type="password" id="pwi" autocomplete="new-password" aria-label="Password"><div class="err" id="pwe" role="alert"></div><div class="btns"><button type="button" id="pwno">Batal</button><button type="submit" class="pri">Buka</button></div></form></div>
 <div class="ov" id="upov" hidden><form id="upf" autocomplete="off"><h3>Upload kunjungan</h3><p id="upinfo"></p><label>Nama salesman<input id="upn" maxlength="40"></label><label>Keterangan<input id="upk" maxlength="200" placeholder="Opsional"></label><div class="err" id="upe" role="alert"></div><div class="btns"><button type="button" id="upno">Batal</button><button type="submit" class="pri">Upload</button></div></form></div>
 <script type="module">
@@ -270,8 +272,9 @@ function clearWeek(kid, bl, mg, n){
 const PW_HASH = 'ba45bbc97e0ccadf931d11d6219a199516944498b1dc296ac80d64a939e5ce70';
 const $pw = document.getElementById('pw'), $pwi = document.getElementById('pwi'), $pwe = document.getElementById('pwe');
 let pwDone = null, pusatOk = false;
+let appOff = false; try { appOff = localStorage.getItem('appOff')==='1'; } catch(e){}
 async function sha(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
-function askPw(){ return new Promise(res => { $pwi.value=''; $pwe.textContent=''; $pw.hidden=false; pwDone=res; setTimeout(()=>$pwi.focus(),30); }); }
+function askPw(j,p,b){ return new Promise(res => { $pw.querySelector('h3').textContent = j||'Pusat Data'; $pw.querySelector('p').textContent = p||'Masukkan password untuk membuka.'; $pw.querySelector('button.pri').textContent = b||'Buka'; $pwi.value=''; $pwe.textContent=''; $pw.hidden=false; pwDone=res; setTimeout(()=>$pwi.focus(),30); }); }
 function closePw(ok){ $pw.hidden=true; const r=pwDone; pwDone=null; if (r) r(ok); }
 document.getElementById('pwno').onclick = () => closePw(false);
 $pw.addEventListener('click', e => { if (e.target===$pw) closePw(false); });
@@ -300,7 +303,9 @@ document.getElementById('upf').onsubmit = e => { e.preventDefault();
 function home(){
   $app.innerHTML = '<a class="pusat" href="#pusat-data"><b>PUSAT DATA</b><small>🔒 perlu password</small></a>' +
     '<h2>Pilih wilayah</h2><p class="sub">Ketuk wilayah untuk melihat daftar kunjungan.</p><div class="grid">' +
-    WILAYAH.map(w => '<a class="tile'+(w==='Padang'?' on':'')+'" href="#'+slug(w)+'"><b>'+esc(w)+'</b><small>'+(w==='Padang'?'12 kecamatan · '+padangTag()+' tagih':'6 hari · '+autoToko(w).length+' toko')+'</small></a>').join('') + '</div>';
+    WILAYAH.map(w => '<a class="tile'+(w==='Padang'?' on':'')+'" href="#'+slug(w)+'"><b>'+esc(w)+'</b><small>'+(w==='Padang'?'12 kecamatan · '+padangTag()+' tagih':'6 hari · '+autoToko(w).length+' toko')+'</small></a>').join('') + '</div>' +
+    '<div style="margin:26px 0 8px;text-align:center"><button type="button" class="act" id="hentikan">⏻ Hentikan aplikasi</button></div>';
+  document.getElementById('hentikan').onclick = () => ubahSaklar(true);
 }
 /* ---- Excel, upload & master ---- */
 const fmtTgl = t => t.split('-').reverse().join('-');
@@ -424,7 +429,7 @@ function terapkanKeMaster(T, items){
       const nm = r.n.trim().toUpperCase(); if (!nm) return;
       const m = (r.a||'').match(/^geo:(-?[\d.]+),(-?[\d.]+)$/), lat = m ? +m[1] : null, lng = m ? +m[2] : null;
       const ex = list.find(x => (r.c && x[0]===r.c) || x[1]===nm) || (r.c ? Object.values(T).flat().find(x => x[0]===r.c) : null);
-      if (ex) { let ch = false; if (ex[2]==null && lat!=null) { ex[2]=lat; ex[3]=lng; ch = true; } if (!ex[4]) { ex[4] = 1; ch = true; } if (ch) n++; return; }
+      if (ex) { let ch = false; if (!r.c && ex[2]==null && lat!=null) { ex[2]=lat; ex[3]=lng; ch = true; } if (!ex[4]) { ex[4] = 1; ch = true; } if (ch) n++; return; }
       const tg = [...(TAGIHAN.toko||[]), ...Object.values(TAGIHAN.lunas||{})].find(t => t.kota==='PDG' && t.nama.toUpperCase()===nm);
       list.push([r.c || (tg ? tg.kode : ''), nm, lat, lng, 1]); n++;
     });
@@ -898,7 +903,7 @@ function tabel(cfg){
     }
     q(tr,'n').value = v.n||''; q(tr,'k').value = v.k||'';
     const t = q(tr,'t'); t.value = v.t||''; t.dataset.v = t.value;
-    tr.dataset.lock = (toko[i] && (v.n||'').trim().toUpperCase()===toko[i][1].toUpperCase()) ? '1' : ''; tr.dataset.a = v.a||''; tr.dataset.g = v.g||''; tr.dataset.h = v.h||''; tr.dataset.c = (v===dr ? (dr.c||'') : cd); renderAl(tr);
+    tr.dataset.lock = (toko[i] && (v.n||'').trim().toUpperCase()===toko[i][1].toUpperCase()) ? '1' : ''; tr.dataset.a = tr.dataset.lock ? dflt(i).a : (v.a||''); tr.dataset.g = v.g||''; tr.dataset.h = v.h||''; tr.dataset.c = (v===dr ? (dr.c||'') : cd); renderAl(tr);
     const nmOk = !!(toko[i] && (v.n||'').trim().toUpperCase()===toko[i][1].toUpperCase());
     const tg = nmOk && (cfg.auto ? TAGSET.has(toko[i][0]) : !!toko[i][4]), lu = nmOk && !tg && (cfg.auto ? LUNASSET.has(toko[i][0]) : true);
     q(tr,'n').disabled = nmOk;
@@ -966,7 +971,7 @@ function tabel(cfg){
       navigator.geolocation.getCurrentPosition(
         p => { const ll = p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6), d = new Date(), p2 = n => String(n).padStart(2,'0');
           tr.dataset.g = ll; tr.dataset.h = p2(d.getHours())+':'+p2(d.getMinutes());
-          if (!(tr.dataset.a||'').startsWith('geo:')) tr.dataset.a = 'geo:'+ll;
+          if (!tr.dataset.lock && !(tr.dataset.a||'').startsWith('geo:')) tr.dataset.a = 'geo:'+ll;
           renderAl(tr); commit(tr, bl, mg); },
         () => { btn.disabled = false; btn.textContent = '📍 Check-in'; alert('Lokasi tidak bisa diambil. Aktifkan GPS dan izin lokasi untuk web ini.'); },
         {enableHighAccuracy:true, timeout:20000, maximumAge:0});
@@ -983,6 +988,7 @@ function detailHari(w, h){
 }
 
 function route(){
+  if (appOff) return;
   if (unsub) { unsub(); unsub = null; }
   let h = ''; try { h = decodeURIComponent(location.hash.slice(1)); } catch(e){}
   const [w, ks] = h.split('/');
@@ -1035,6 +1041,7 @@ async function segarkanConfig(){
   if (ch) { const ae = document.activeElement; if (!(ae && ae.closest && ae.closest('tbody'))) route(); }
 }
 initFirebase().then(async () => {
+  if (fs) fs.onSnapshot(fs.doc(db,'config','status'), sn => { const off = !!(sn.exists() && sn.data().off); if (off !== appOff) setOff(off); }, () => {});
   let baru = false;
   try {
     if (fs) { const sn = await fs.getDoc(fs.doc(db,'config','master')); if ((sn.exists() ? sn.data().ver : null) !== MASTER_VER) { terapkanMasterBaru(); baru = true; } }
@@ -1044,6 +1051,27 @@ initFirebase().then(async () => {
   await segarkanConfig();
   migrasiSemuaKeTagihan();
 });
+
+/* ---- Saklar aplikasi: dimatikan/dihidupkan dengan password, berlaku untuk semua pengguna ---- */
+function tampilKunci(){
+  document.getElementById('kunci').hidden = !appOff;
+  $app.inert = appOff; document.querySelector('header.top').inert = appOff;
+  if (appOff && !$up.hidden) closeUp(null);
+}
+function setOff(v){ appOff = v; try { localStorage.setItem('appOff', v ? '1' : '0'); } catch(e){} tampilKunci(); if (!v) route(); }
+async function ubahSaklar(mati){
+  const ok = await askPw(mati ? 'Hentikan aplikasi' : 'Aktifkan aplikasi',
+    mati ? 'Masukkan password untuk menghentikan aplikasi. Semua pengguna tidak akan bisa memakainya.' : 'Masukkan password untuk mengaktifkan aplikasi kembali.',
+    mati ? 'Hentikan' : 'Aktifkan');
+  if (!ok) return;
+  if (fs) {
+    try { await fs.setDoc(fs.doc(db,'config','status'), {off:mati, ts:Date.now()}); setSync('Tersambung ke Firebase','ok'); }
+    catch(e){ setSync('Gagal menyimpan status ke Firebase','warn'); return alert('Gagal menyimpan status ke Firebase (koneksi bermasalah). Tidak ada yang diubah, coba lagi.'); }
+  }
+  setOff(mati);
+}
+document.getElementById('aktifkan').onclick = () => ubahSaklar(false);
+tampilKunci();
 
 /* Pasang sebagai aplikasi (Add to Home Screen) */
 if ('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
