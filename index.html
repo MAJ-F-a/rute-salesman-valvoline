@@ -1327,7 +1327,7 @@ function tabel(cfg){
     Array.from({length:NR},(_,i)=>'<tr data-i="'+i+'"><td>'+(i+1)+'</td>' +
       '<td><input class="k" data-f="n" autocomplete="off" aria-label="Nama toko '+(i+1)+'"></td><td class="al"></td><td class="ck"></td><td class="sg"></td>' +
       '<td><select data-f="t" aria-label="Transaksi order '+(i+1)+'"><option value="">Pilih</option><option value="ya">Ya</option><option value="tidak">Tidak</option></select></td>' +
-      '<td><input class="k" data-f="k" aria-label="Keterangan '+(i+1)+'"></td><td class="ax"><button type="button" class="mini del" data-del="1" hidden aria-label="Hapus kunjungan '+(i+1)+'">🗑 Hapus</button></td></tr>').join('') +
+      '<td><input class="k" data-f="k" aria-label="Keterangan '+(i+1)+'"></td><td class="ax"><button type="button" class="mini del" data-del="1" hidden aria-label="Hapus kunjungan '+(i+1)+'">🗑 Hapus</button><button type="button" class="mini del" data-hide="1" hidden aria-label="Hapus toko wajib '+(i+1)+' hari ini">✕</button></td></tr>').join('') +
     '</tbody></table></div>' +
     '<div class="bar"><button type="button" class="act pri" id="up">⬆ Upload kunjungan hari ini</button><span id="ups" class="sub"></span></div>' +
     '<p class="foot">Setelah selesai kunjungan hari ini, tekan Upload agar data masuk ke Pusat Data. Setelah berhasil terupload, isian tabel ini otomatis dikosongkan karena datanya sudah ada di Pusat Data. Maksimal '+NR+' kunjungan per hari. Tekan Check-in saat berada di toko: titik GPS dan jam tersimpan. Kalau salah check-in, tekan Batal di samping jam check-in. Nama toko dari daftar master terkunci dan tidak bisa diubah; yang bisa diisi hanya Check-in, Transaksi, dan Keterangan. Transaksi baru bisa diisi setelah check-in, sedangkan Keterangan bisa diisi kapan saja. Untuk setiap toko yang namanya terisi, Check-in, Transaksi, dan Keterangan WAJIB lengkap, kalau tidak upload tidak bisa dilakukan. Kunjungan tambahan yang salah isi atau salah check-in bisa dihapus dengan tombol Hapus; toko wajib dari daftar master tidak bisa dihapus. Kolom Status tagihan menunjukkan Ada tagihan atau Tidak ada tagihan sesuai data Pusat Data. Lokasi dan nama toko tersimpan untuk minggu dan bulan berikutnya. Semua isian tersimpan otomatis.</p>';
@@ -1335,13 +1335,15 @@ function tabel(cfg){
   $app.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { minggu = b.dataset.w; tabel(cfg); });
   document.getElementById('bln').onchange = e => { if (e.target.value) { bulan = e.target.value; tabel(cfg); } };
 
+  $app.querySelectorAll('.scroll').forEach(scrollAtas);
   const trs = [...$app.querySelectorAll('tbody tr')];
   /* Tombol Hapus hanya untuk kunjungan tambahan salesman (bukan toko wajib dari master) yang sudah ada isinya */
-  const updHapus = tr => { const b = tr.querySelector('[data-del]'); if (!b) return; const isi = q(tr,'n').value.trim() || tr.dataset.g || q(tr,'t').value || q(tr,'k').value.trim(); b.hidden = !!tr.dataset.lock || !isi; };
+  const updHapus = tr => { const hb = tr.querySelector('[data-hide]'); if (hb) hb.hidden = !tr.dataset.lock; const b = tr.querySelector('[data-del]'); if (!b) return; const isi = q(tr,'n').value.trim() || tr.dataset.g || q(tr,'t').value || q(tr,'k').value.trim(); b.hidden = !!tr.dataset.lock || !isi; };
   const dflt = i => toko[i] ? {n:toko[i][1].toLowerCase(), a:(toko[i][2]!=null && toko[i][3]!=null ? 'geo:'+toko[i][2]+','+toko[i][3] : ''), t:'', k:''} : {};
   const fill = d => {
   const selesai = d['u_'+bulan+'_'+minggu] === hariIniStr();
   const usEl = document.getElementById('ups'); if (selesai && usEl && !usEl.textContent) usEl.textContent = '✔ Sudah diupload hari ini. Daftar toko muncul lagi pada kunjungan berikutnya.';
+  const hh = d['h_'+bulan+'_'+minggu], hidN = new Set((hh && hh.tgl===hariIniStr()) ? (hh.n||[]) : []);
   const used = new Set();
   trs.forEach((_,i) => { const x = d[bulan+'_'+minggu+'_'+i]; if (x && x.n && x.n.trim()) used.add(x.n.trim().toUpperCase()); });
   trs.forEach((tr,i) => {
@@ -1361,6 +1363,7 @@ function tabel(cfg){
     tr.classList.toggle('tag', tg); tr.classList.toggle('lun', lu);
     const sg = tr.querySelector('.sg'); sg.textContent = tg ? 'Ada tagihan' : lu ? 'Tidak ada tagihan' : ''; sg.classList.toggle('l', lu);
     tr.cells[0].innerHTML = (i+1)+(tg ? '<br><small style="color:#b42318;font-weight:700">TAGIH</small>' : '');
+    tr.hidden = !!(tr.dataset.lock && hidN.has((q(tr,'n').value||'').trim().toUpperCase()));
   });
   };
   listen(kid, fill);
@@ -1377,12 +1380,12 @@ function tabel(cfg){
     const ub = document.getElementById('up'), us = document.getElementById('ups');
     const blUp = bulan, mgUp = minggu;
     [...timers.keys()].forEach(tr => { clearTimeout(timers.get(tr)); commit(tr, bulan, minggu); }); timers.clear();
-    const rows = trs.map((tr,i) => ({...rowData(tr), c:(toko[i] && q(tr,'n').value.trim().toUpperCase()===toko[i][1].toUpperCase()) ? toko[i][0] : ''})).filter(r => r.n.trim()).map(r => ({n:r.n.trim().toUpperCase(), a:r.a, g:r.g, h:r.h, c:r.c, t:r.t, k:r.k.trim()}));
+    const rows = trs.map((tr,i) => ({...rowData(tr), c:(toko[i] && q(tr,'n').value.trim().toUpperCase()===toko[i][1].toUpperCase()) ? toko[i][0] : ''})).filter((r,i) => !trs[i].hidden && r.n.trim()).map(r => ({n:r.n.trim().toUpperCase(), a:r.a, g:r.g, h:r.h, c:r.c, t:r.t, k:r.k.trim()}));
     if (!rows.length) return alert('Belum ada toko yang diisi.');
     /* Wajib: setiap toko yang namanya terisi harus sudah Check-in, serta punya Transaksi dan Keterangan */
     trs.forEach(tr => tr.classList.remove('bad'));
     const lengkap = tr => !!(tr.dataset.g && q(tr,'t').value && q(tr,'k').value.trim());
-    const kurang = trs.filter(tr => q(tr,'n').value.trim() && !lengkap(tr));
+    const kurang = trs.filter(tr => !tr.hidden && q(tr,'n').value.trim() && !lengkap(tr));
     if (kurang.length) {
       kurang.forEach(tr => tr.classList.add('bad'));
       const rinci = kurang.map(tr => {
@@ -1429,8 +1432,16 @@ function tabel(cfg){
     const tr = e.target.closest('tr');
     if (tr && timers.has(tr)) { clearTimeout(timers.get(tr)); timers.delete(tr); commit(tr, bulan, minggu); }
   });
+  const sembunyi = async tr => {
+    const nm = q(tr,'n').value.trim().toUpperCase(); if (!nm || !tr.dataset.lock) return;
+    if (!(await askPw('Hapus toko wajib hari ini', nm+' dihapus dari tabel hari ini saja dan tidak dihitung sebagai kunjungan. Toko tetap ada di Pusat Data dan muncul lagi besok mulai pukul 00:00. Masukkan password.', 'Hapus'))) return;
+    const bl = bulan, mg = minggu, key = 'h_'+bl+'_'+mg, hoy = hariIniStr(), cur = lsGet(kid)[key];
+    save(kid, key, {tgl:hoy, n:[...new Set([...((cur && cur.tgl===hoy) ? (cur.n||[]) : []), nm])]});
+    if (!fs) fill(lsGet(kid));
+  };
   tb.addEventListener('click', e => {
     const tr = e.target.closest('tr'); if (!tr) return;
+    if (e.target.dataset.hide) { sembunyi(tr); return; }
     if (e.target.dataset.bci) {
       const nm = q(tr,'n').value.trim() || ('baris '+(+tr.dataset.i+1));
       const adaT = !!q(tr,'t').value;
@@ -1493,6 +1504,7 @@ function tabelW(cfg){
     '<div class="bar"><button type="button" class="act pri" id="up">⬆ Upload kunjungan</button><span id="ups" class="sub"></span></div>' +
     '<p class="foot">Toko wajib ('+toko.length+' toko) terisi otomatis dari atas, sisa baris kosong untuk kunjungan tambahan (total '+NR+' baris). Tekan Check-in saat berada di toko: titik GPS, jam, dan tanggal tersimpan. Tanggal terkunci saat check-in dan tidak berubah walaupun hari berganti; kalau salah check-in, tekan Batal di samping jam check-in. Transaksi baru bisa diisi setelah check-in, sedangkan Keterangan bisa diisi kapan saja. Untuk setiap toko yang namanya terisi, Check-in, Transaksi, dan Keterangan WAJIB lengkap, kalau tidak upload tidak bisa dilakukan. Isian tidak hilang karena ganti hari; hanya Upload yang mengosongkannya. Setelah upload, toko wajib hilang dari tabel sampai pukul 00:00, tetapi kunjungan baru tetap bisa diisi. Toko wajib yang tidak dikunjungi bisa disembunyikan hari itu dengan tombol ✕ (perlu password). Kunjungan tambahan yang salah isi bisa dihapus dengan tombol Hapus. Semua isian tersimpan otomatis.</p>';
 
+  $app.querySelectorAll('.scroll').forEach(scrollAtas);
   const trs = [...$app.querySelectorAll('tbody tr')];
   let tk = toko, lastD = {};
   const renderTg = tr => { tr.querySelector('.tg').textContent = tr.dataset.tg ? fmtTgl(tr.dataset.tg) : ''; };
@@ -1506,7 +1518,7 @@ function tabelW(cfg){
   const rowData = tr => ({n:q(tr,'n').value, a:tr.dataset.a||'', g:tr.dataset.g||'', h:tr.dataset.h||'', tg:tr.dataset.tg||'', c:tr.dataset.c||'', t:q(tr,'t').value, k:q(tr,'k').value});
   const fill = d => {
     lastD = d || {};
-    const hoy = hariIniStr(), up = new Set(d.up_tgl===hoy ? (d.up_kode||[]) : []), hid = new Set(d.hid||[]);
+    const hoy = hariIniStr(), up = new Set(d.up_tgl===hoy ? (d.up_kode||[]) : []), hid = new Set(d.hid_tgl===hoy ? (d.hid||[]) : []);
     tk = toko.filter(t => !up.has(t[0]) && !hid.has(t[0]));
     const us = document.getElementById('ups');
     if (us && (!us.textContent || us.textContent.startsWith('✔ Sudah'))) us.textContent = d.up_tgl===hoy ? '✔ Sudah diupload hari ini. Toko wajib muncul lagi mulai pukul 00:00. Kunjungan tambahan masih bisa diisi.' : '';
@@ -1538,10 +1550,10 @@ function tabelW(cfg){
   /* Hapus draft lokal + server setelah upload, lalu catat tanggal upload dan daftar toko wajib yang disembunyikan sampai 00:00 */
   const bersihW = async (kodes, tgl) => {
     const keys = new Set([...Object.keys(lsGet(kid)), ...Object.keys(lastD)].filter(k => /^[kr]_/.test(k)));
-    const cur = lsGet(kid); keys.forEach(k => { delete cur[k]; }); delete cur.hid; cur.up_tgl = tgl; cur.up_kode = kodes;
+    const cur = lsGet(kid); keys.forEach(k => { delete cur[k]; }); cur.up_tgl = tgl; cur.up_kode = kodes;
     try { localStorage.setItem(lsKey(kid), JSON.stringify(cur)); } catch(e){}
     if (!fs) return true;
-    const del = {up_tgl:tgl, up_kode:kodes, hid:fs.deleteField()}; keys.forEach(k => { del[k] = fs.deleteField(); });
+    const del = {up_tgl:tgl, up_kode:kodes}; keys.forEach(k => { del[k] = fs.deleteField(); });
     return fs.setDoc(fs.doc(db,'rute',kid), {d:del}, {merge:true}).then(()=>true).catch(()=>false);
   };
   document.getElementById('up').onclick = async () => {
@@ -1616,9 +1628,9 @@ function tabelW(cfg){
     if (e.target.dataset.hide) {
       if (!tr.dataset.lock) return;
       const kode = tr.dataset.c, nm = q(tr,'n').value.trim().toUpperCase();
-      if (!(await askPw('Sembunyikan toko', nm+' disembunyikan dari tabel hari ini dan tidak dihitung sebagai kunjungan. Toko tetap ada di Pusat Data. Muncul lagi setelah salesman upload dan hari berganti. Masukkan password.', 'Sembunyikan'))) return;
+      if (!(await askPw('Sembunyikan toko', nm+' disembunyikan dari tabel hari ini saja dan tidak dihitung sebagai kunjungan. Toko tetap ada di Pusat Data. Muncul lagi besok mulai pukul 00:00. Masukkan password.', 'Sembunyikan'))) return;
       const cur = fs ? lastD : lsGet(kid);
-      save(kid, 'hid', [...new Set([...(cur.hid||[]), kode])]);
+      const hoy = hariIniStr(); save(kid, 'hid', [...new Set([...(cur.hid_tgl===hoy ? (cur.hid||[]) : []), kode])]); save(kid, 'hid_tgl', hoy);
       if (!fs) fill(lsGet(kid));
       return;
     }
