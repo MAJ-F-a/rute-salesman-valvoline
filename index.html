@@ -214,8 +214,8 @@ const padangTag = () => KEC.reduce((n,k) => n + (TOKO[k[0]]||[]).filter(x => x[4
 
 /* ============ MASTER TOKO (Retail / Semi Grosir / Grosir) ============ */
 const MT_JENIS = [['retail','Toko Retail'],['semi-grosir','Toko Semi Grosir'],['grosir','Toko Grosir'],['tidak-terdaftar','Kategori Toko Belum Diisi']];
-let MTOKO = {retail:[], 'semi-grosir':[], grosir:[], 'tidak-terdaftar':[]};
-const mtNorm = o => { const r = {retail:[], 'semi-grosir':[], grosir:[], 'tidak-terdaftar':[]}; MT_JENIS.forEach(j => { if (o && Array.isArray(o[j[0]])) r[j[0]] = o[j[0]]; }); return r; };
+let MTOKO = {retail:[], 'semi-grosir':[], grosir:[], 'tidak-terdaftar':[], 'pernah-order':[]};
+const mtNorm = o => { const r = {retail:[], 'semi-grosir':[], grosir:[], 'tidak-terdaftar':[], 'pernah-order':[]}; if (o && Array.isArray(o['pernah-order'])) r['pernah-order'] = o['pernah-order']; MT_JENIS.forEach(j => { if (o && Array.isArray(o[j[0]])) r[j[0]] = o[j[0]]; }); return r; };
 try { const m = localStorage.getItem('mtoko'); if (m) MTOKO = mtNorm(JSON.parse(m)); } catch(e){}
 async function mtMuat(){
   if (!fs) return;
@@ -309,7 +309,8 @@ function masterMenu(){
   $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a><h2>Master toko</h2><p class="sub">Toko hanya bisa didaftarkan lewat upload Excel. Kolom: ID toko, Nama toko, Latitude, Longitude, Kecamatan (untuk kode PDG), Kategori (Retail / Semi Grosir / Grosir). Semua toko yang diupload diterima. Toko yang datanya belum lengkap (kode toko, kecamatan PDG, kategori, atau nama/koordinat) tidak masuk Retail, Semi Grosir, Grosir, dan All toko, tetapi dikumpulkan di Kategori Toko Belum Diisi. Lengkapi lewat tombol Edit; setelah lengkap toko pindah sendiri ke kategorinya dan bisa diizinkan ke Pusat Data.</p>' +
     '<div class="bar"><button class="act pri" id="mtup">⬆ Upload Excel</button><button class="act" id="mttp">⬇ Unduh template</button><input type="file" id="mtfile" accept=".xlsx,.xls" hidden></div>' + mtLap +
     '<div class="grid">' + MT_JENIS.map(j => '<a class="tile mt" href="#master-toko/'+j[0]+'"><b>'+esc(j[1])+'</b><small>'+cJ(j[0])+' toko</small></a>').join('') +
-    '<a class="tile mt" href="#master-toko/all"><b>All toko</b><small>'+tot+' toko</small></a></div>';
+    '<a class="tile mt" href="#master-toko/all"><b>All toko</b><small>'+tot+' toko</small></a>' +
+    '<a class="tile mt" href="#master-toko/pernah-order"><b>Toko pernah order</b><small>'+((MTOKO['pernah-order']||[]).length)+' toko</small></a></div>';
   const f = document.getElementById('mtfile');
   document.getElementById('mttp').onclick = () => mtTemplate();
   document.getElementById('mtup').onclick = async () => { if (await mtPw()) f.click(); };
@@ -362,6 +363,104 @@ function mtEdit(id, done){
       else { const lunas = {...(TAGIHAN.lunas||{})}; if (lunas[id]) lunas[id] = {...lunas[id], nama}; setTagihan({...TAGIHAN, toko:(TAGIHAN.toko||[]).map(y => y.kode===id ? {...y, nama} : y), lunas}); }
     }
     await mtSimpan(); ov.remove(); done();
+  };
+}
+/* ============ TOKO PERNAH ORDER ============
+   Toko baru yang diisi sendiri salesman (Transaksi Ya), sudah diproses admin, dan belum ada di Master toko.
+   Disimpan di MTOKO['pernah-order']. Kalau datanya sudah lengkap dan kategori dipilih, toko pindah sendiri ke Retail / Semi Grosir / Grosir. */
+const PO_K = 'pernah-order';
+const poList = () => (MTOKO[PO_K] = MTOKO[PO_K] || []);
+const poPh = () => { let n = 0; [...MT_JENIS.flatMap(j => MTOKO[j[0]]), ...poList()].forEach(t => { const m = /^TANPA-KODE-(\d+)$/.exec(t.id); if (m) n = Math.max(n, +m[1]); }); return 'TANPA-KODE-'+String(n+1).padStart(3,'0'); };
+const poKurang = t => { const m = []; if (mtKodeBad(t) || mtPre(t.id)!=='PDG') m.push('kode toko'); if (!t.kec) m.push('kecamatan'); if (!t.kp) m.push('kategori'); if (!String(t.nama||'').trim() || !mtLLok(t)) m.push('nama / koordinat'); return m; };
+async function poDaftar(baru){
+  let tunda = []; try { tunda = JSON.parse(localStorage.getItem('po_tunda')||'[]'); } catch(e){}
+  const semua = [...tunda, ...(baru||[])], res = {n:0, lewat:0, gagal:false};
+  if (!semua.length) return res;
+  await mtMuat();
+  const L = poList();
+  semua.forEach(b => {
+    const nm = String(b.nama||'').trim().toUpperCase(); if (!nm) return;
+    const sem = mtSemua(), kd = String(b.kode||'').trim().toUpperCase();
+    const ada = (kd && (sem.some(t => t.id===kd) || L.some(t => t.id===kd))) || sem.some(t => String(t.nama||'').trim().toUpperCase()===nm) || L.some(t => String(t.nama||'').trim().toUpperCase()===nm);
+    if (ada) { res.lewat++; return; }
+    const id = (kd && kd.includes('-') && mtPre(kd)==='PDG') ? kd : poPh();
+    L.push({id, nama:nm, lat:b.lat!=null ? b.lat : null, lon:b.lng!=null ? b.lng : null, kec:b.kec, izin:true, po:{kec:b.kec, nama:nm}, tgl:hariIniStr()});
+    res.n++;
+  });
+  const ok = await mtSimpan();
+  if (ok) { try { localStorage.removeItem('po_tunda'); } catch(e){} }
+  else { res.gagal = true; try { localStorage.setItem('po_tunda', JSON.stringify(semua)); } catch(e){} }
+  return res;
+}
+function masterTokoPO(){
+  mtQ = '';
+  const merah = s => '<span style="color:#b42318;font-weight:700">'+s+'</span>';
+  const render = () => {
+    const L = poList().slice().sort((a,b) => String(a.nama||'').localeCompare(String(b.nama||'')));
+    const kat = {'retail':'Retail','semi-grosir':'Semi Grosir','grosir':'Grosir'};
+    $app.innerHTML = '<a class="back" href="#master-toko">‹ Master toko</a><h2>Toko pernah order</h2><p class="sub">'+L.length+' toko baru yang diisi sendiri oleh salesman (Transaksi Ya) dan sudah diproses admin. Toko ini sudah ada di Pusat Data dengan status Ada tagihan. Klik Edit untuk melengkapi ID toko, kecamatan, kategori, nama, dan koordinat. Perubahan ikut tersimpan di Data Master. Setelah semuanya lengkap, toko pindah sendiri ke Retail, Semi Grosir, atau Grosir dan tampil di All toko.</p>' +
+      (L.length ? '<div class="scroll pd"><table style="min-width:1100px"><caption>Toko pernah order</caption><thead><tr><th style="width:48px">No.</th><th style="width:150px">ID toko</th><th>Nama toko</th><th style="width:90px">Latitude</th><th style="width:90px">Longitude</th><th style="width:120px">Kecamatan</th><th style="width:170px">Peta</th><th style="width:100px">Kategori</th><th style="width:150px">Yang kurang</th><th style="width:80px">Edit</th></tr></thead><tbody>' +
+        L.map((t,i) => '<tr><td>'+(i+1)+'</td><td class="l">'+(/^TANPA-KODE-\d+$/.test(t.id) ? merah('belum ada kode') : esc(t.id))+'</td><td class="l">'+(t.nama ? esc(t.nama) : merah('belum diisi'))+'</td><td>'+(t.lat!=null && t.lat!=='' ? esc(t.lat) : '-')+'</td><td>'+(t.lon!=null && t.lon!=='' ? esc(t.lon) : '-')+'</td><td>'+(t.kec ? esc(t.kec) : merah('belum diisi'))+'</td><td>'+mtMaps(t)+'</td><td>'+(t.kp ? esc(kat[t.kp]) : merah('belum dipilih'))+'</td><td>'+merah(poKurang(t).join(', '))+'</td><td><button type="button" class="mini" data-po="'+esc(t.id)+'">✎ Edit</button></td></tr>').join('') + '</tbody></table></div>'
+        : '<p class="empty">Belum ada toko di sini. Toko baru dari salesman muncul setelah admin menekan Mulai proses hasil kerja.</p>');
+    $app.querySelectorAll('[data-po]').forEach(b => b.onclick = async () => { if (!(await mtPw())) return; mtEditPO(b.dataset.po, render); });
+    $app.querySelectorAll('.scroll.pd').forEach(scrollAtas);
+  };
+  render();
+  mtMuat().then(() => poDaftar([])).catch(()=>{}).then(() => { if (location.hash==='#master-toko/pernah-order' && !(document.activeElement && document.activeElement.closest('button'))) render(); });
+}
+function mtEditPO(id, done){
+  const t0 = poList().find(x => x.id===id); if (!t0) return;
+  const ph = /^TANPA-KODE-\d+$/.test(id);
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:14px';
+  const st = 'width:100%;font:inherit;padding:9px;border:1.5px solid var(--line);border-radius:6px;margin:4px 0 10px;background:#fff;box-sizing:border-box';
+  ov.innerHTML = '<div role="dialog" aria-modal="true" style="background:#fff;border-radius:10px;padding:18px;max-width:420px;width:100%;max-height:90vh;overflow:auto"><h3 style="margin:0 0 2px">Edit toko pernah order</h3><p class="sub" style="margin:0 0 12px">'+(ph ? 'Kode toko belum ada' : esc(t0.id))+'</p>' +
+    '<label>ID toko<input id="pid" style="'+st+';text-transform:uppercase" value="'+(ph ? '' : esc(t0.id))+'" placeholder="contoh: PDG-ABC-NON-001" autocomplete="off"></label>' +
+    '<label>Nama toko<input id="pn" style="'+st+';text-transform:uppercase" value="'+esc(t0.nama||'')+'" autocomplete="off"></label>' +
+    '<label>Latitude<input id="pla" inputmode="decimal" style="'+st+'" value="'+(t0.lat!=null ? esc(t0.lat) : '')+'"></label>' +
+    '<label>Longitude<input id="plo" inputmode="decimal" style="'+st+'" value="'+(t0.lon!=null ? esc(t0.lon) : '')+'"></label>' +
+    '<label>Kecamatan<select id="pk" style="'+st+'">'+KEC.map(k => '<option'+(k[0]===t0.kec ? ' selected' : '')+'>'+esc(k[0])+'</option>').join('')+'</select></label>' +
+    '<label>Kategori<select id="pkat" style="'+st+'"><option value="">- belum dipilih -</option>'+[['retail','Retail'],['semi-grosir','Semi Grosir'],['grosir','Grosir']].map(j => '<option value="'+j[0]+'"'+(j[0]===t0.kp ? ' selected' : '')+'>'+j[1]+'</option>').join('')+'</select></label>' +
+    '<p class="sub" id="pe" style="color:#b42318;min-height:1.2em;margin:0 0 8px"></p><div class="bar"><button type="button" class="act" id="pno">Batal</button><button type="button" class="act pri" id="pok">Simpan</button></div></div>';
+  document.body.appendChild(ov);
+  const $e = i => ov.querySelector('#'+i), pesan = m => { $e('pe').textContent = m; };
+  $e('pno').onclick = () => ov.remove();
+  $e('pok').onclick = async () => {
+    const kode = $e('pid').value.trim().toUpperCase(), nama = $e('pn').value.replace(/\s+/g,' ').trim().toUpperCase(), ke = $e('pk').value, kp = $e('pkat').value;
+    let la = $e('pla').value.trim().replace(',','.'), lo = $e('plo').value.trim().replace(',','.');
+    if (!nama) return pesan('Nama toko wajib diisi.');
+    if (kode && (!kode.includes('-') || mtPre(kode)!=='PDG')) return pesan('ID toko harus berawalan PDG- dan memakai tanda "-", contoh PDG-ABC-NON-001.');
+    if ((la==='') !== (lo==='')) return pesan('Latitude dan Longitude harus diisi dua-duanya.');
+    if (la!=='' && (isNaN(+la) || isNaN(+lo) || Math.abs(+la)>90 || Math.abs(+lo)>180)) return pesan('Latitude/Longitude bukan angka valid.');
+    const LA = la!=='' ? +la : null, LN = lo!=='' ? +lo : null;
+    $e('pok').disabled = true;
+    const gagal = m => { $e('pok').disabled = false; pesan(m); };
+    await mtMuat();
+    const t = poList().find(x => x.id===id); if (!t) return gagal('Toko tidak ditemukan (mungkin sudah pindah atau dihapus).');
+    if (kode && (mtSemua().some(y => y.id===kode) || poList().some(y => y!==t && y.id===kode))) return gagal('ID toko '+kode+' sudah dipakai toko lain.');
+    const kec0 = t.po ? t.po.kec : t.kec, nm0 = t.po ? t.po.nama : t.nama;
+    if (ke!==kec0 && !confirm('Pindahkan '+nm0+' dari '+kec0+' ke '+ke+'?\n\nToko langsung pindah di rute kunjungan salesman Padang. Sebaiknya dilakukan saat tidak ada kunjungan berjalan.')) return gagal('');
+    if (fs) { try { const sn = await fs.getDoc(fs.doc(db,'config','master')); if (sn.exists() && sn.data().json) TOKO = JSON.parse(sn.data().json); } catch(e){} }
+    const row = (TOKO[kec0]||[]).find(x => x[1]===nm0);
+    if (row) {
+      if ((TOKO[ke]||[]).some(x => x!==row && x[1]===nama)) return gagal('Nama '+nama+' sudah ada di kecamatan '+ke+'.');
+      if (kode && Object.values(TOKO).flat().some(x => x!==row && x[0]===kode)) return gagal('ID toko '+kode+' sudah dipakai di Data Master.');
+      row[0] = kode; row[1] = nama; row[2] = LA; row[3] = LN; simpanMaster();
+      if (ke!==kec0) { const h = await pindahToko(kec0, nama, ke); if (h.err) return gagal('Data tersimpan, tetapi pindah kecamatan gagal: '+h.err); }
+    }
+    t.nama = nama; t.lat = LA; t.lon = LN; t.kec = ke; t.po = {kec:ke, nama};
+    if (kode) t.id = kode; else if (!ph) t.id = poPh();
+    if (kp) t.kp = kp; else delete t.kp;
+    let pindah = false;
+    if (!poKurang(t).length) {
+      MTOKO[PO_K] = poList().filter(x => x!==t);
+      const baru = {id:t.id, nama:t.nama, lat:t.lat, lon:t.lon, kec:t.kec, izin:true};
+      MTOKO[t.kp].push(baru); pindah = true;
+    }
+    const ok = await mtSimpan();
+    ov.remove(); done();
+    if (!ok) alert('Perubahan belum tersimpan ke server (koneksi bermasalah). Cek koneksi lalu coba lagi.');
+    else if (pindah) alert('Data lengkap. "'+nama+'" pindah ke Toko '+({'retail':'Retail','semi-grosir':'Semi Grosir','grosir':'Grosir'})[kp]+' dan tampil di All toko.');
   };
 }
 function masterToko(js, sub){
@@ -546,7 +645,7 @@ function home(){
   $app.innerHTML = '<a class="pusat" href="#pusat-data"><b>PUSAT DATA</b><small>🔒 perlu password</small></a>' +
     '<h2>Pilih wilayah</h2><p class="sub">Ketuk wilayah untuk melihat daftar kunjungan.</p><div class="grid">' +
     WILAYAH.map(w => '<a class="tile'+(w==='Padang'?' on':'')+'" href="#'+slug(w)+'"><b>'+esc(w)+'</b><small>'+(w==='Padang'?'12 kecamatan · '+padangTag()+' tagih':autoToko(w).length+' toko wajib')+'</small></a>').join('') + '</div>' +
-    '<a class="pusat mtb" href="#master-toko" style="margin:26px 0 0"><b>MASTER TOKO</b><small>Retail · Semi Grosir · Grosir · Kategori Toko Belum Diisi · All toko</small></a>' +
+    '<a class="pusat mtb" href="#master-toko" style="margin:26px 0 0"><b>MASTER TOKO</b><small>Retail · Semi Grosir · Grosir · Kategori Toko Belum Diisi · All toko · Toko pernah order</small></a>' +
     '<div style="margin:26px 0 8px;text-align:center"><button type="button" class="act" id="hentikan">⏻ Hentikan aplikasi</button></div>';
   document.getElementById('hentikan').onclick = () => ubahSaklar(true);
 }
@@ -663,7 +762,8 @@ function setMaster(obj){
 }
 /* Toko yang transaksi (Ya) saat upload otomatis masuk ke Data Master kecamatannya. */
 /* Terapkan banyak upload ke satu objek master T. items = [{kec, rows}]. Mengembalikan jumlah toko yang ditambah/dilengkapi. */
-function terapkanKeMaster(T, items){
+let poBaru = [];
+function terapkanKeMaster(T, items, baruOut){
   KEC.forEach(k => { if (!T[k[0]]) T[k[0]] = []; });
   let n = 0;
   items.forEach(({kec, rows}) => {
@@ -674,7 +774,7 @@ function terapkanKeMaster(T, items){
       const ex = list.find(x => (r.c && x[0]===r.c) || x[1]===nm) || (r.c ? Object.values(T).flat().find(x => x[0]===r.c) : null);
       if (ex) { let ch = false; if (!r.c && ex[2]==null && lat!=null) { ex[2]=lat; ex[3]=lng; ch = true; } if (!ex[4]) { ex[4] = 1; ch = true; } if (ch) n++; return; }
       const tg = [...(TAGIHAN.toko||[]), ...Object.values(TAGIHAN.lunas||{})].find(t => t.kota==='PDG' && t.nama.toUpperCase()===nm);
-      list.push([r.c || (tg ? tg.kode : ''), nm, lat, lng, 1]); n++;
+      const kd = r.c || (tg ? tg.kode : ''); list.push([kd, nm, lat, lng, 1]); n++; if (baruOut) baruOut.push({kec, nama:nm, kode:kd, lat, lng});
     });
   });
   return n;
@@ -687,7 +787,7 @@ async function tambahKeMasterBanyak(items){
       await fs.runTransaction(db, async tx => {
         const ref = fs.doc(db,'config','master'), sn = await tx.get(ref);
         const T = (sn.exists() && sn.data().json) ? JSON.parse(sn.data().json) : JSON.parse(JSON.stringify(TOKO));
-        n = terapkanKeMaster(T, items); hasil = T;
+        poBaru = []; n = terapkanKeMaster(T, items, poBaru); hasil = T;
         if (n) {
           const doc = {json: JSON.stringify(T), ts: Date.now()}, v = sn.exists() ? sn.data().ver : MASTER_VER;
           if (v) doc.ver = v;
@@ -699,7 +799,8 @@ async function tambahKeMasterBanyak(items){
       return n;
     } catch(e){ return -1; }
   }
-  const n = terapkanKeMaster(TOKO, items);
+  poBaru = [];
+  const n = terapkanKeMaster(TOKO, items, poBaru);
   if (n) simpanMaster();
   return n;
 }
@@ -732,13 +833,14 @@ async function prosesHariIni(){
   if (!confirm('Proses hasil kerja salesman?\n\n• Upload belum diproses: '+list.length+'\n• Perkiraan toko baru / dilengkapi di Data Master: '+kira+'\n• Toko luar kota pindah ke Ada tagihan: '+yaLuar.size+'\n\nUpload yang sudah diproses tidak akan diproses lagi.\n\nLanjutkan?')) return;
   const n = await tambahKeMasterBanyak(items);
   if (n < 0) return alert('Gagal menyimpan ke Data Master (koneksi bermasalah). Tidak ada yang diubah, coba lagi.');
+  let po = {n:0, lewat:0, gagal:false}; try { po = await poDaftar(poBaru); } catch(e){ po.gagal = true; }
   if (yaLuar.size) {
     const lunas = {...(TAGIHAN.lunas||{})}, toko = [...(TAGIHAN.toko||[])];
     yaLuar.forEach(k => { const l = lunas[k]; if (l) { toko.push({kode:k, kota:l.kota, nama:l.nama, sisa:l.sisa||0}); delete lunas[k]; } });
     setTagihan({...TAGIHAN, toko, lunas});
   }
   const ok = await tandaiDiproses(list);
-  alert('Selesai. '+n+' toko masuk / dilengkapi di Data Master dari '+list.length+' upload.'+(ok ? '' : '\n\nCatatan: penandaan upload gagal disimpan. Aman ditekan ulang, toko tidak akan dobel.'));
+  alert('Selesai. '+n+' toko masuk / dilengkapi di Data Master dari '+list.length+' upload.'+(ok ? '' : '\n\nCatatan: penandaan upload gagal disimpan. Aman ditekan ulang, toko tidak akan dobel.')+(po.n ? '\n\n'+po.n+' toko baru dari salesman masuk Master toko > Toko pernah order. Lengkapi datanya di sana.' : '')+(po.lewat ? '\n'+po.lewat+' toko baru tidak didaftarkan ke Toko pernah order karena sudah ada di Master toko.' : '')+(po.gagal ? '\n\nCatatan: pendaftaran ke Toko pernah order gagal disimpan. Akan dicoba lagi otomatis saat menu Toko pernah order dibuka.' : ''));
   pusatPage();
 }
 async function importMaster(file){
@@ -961,6 +1063,7 @@ async function hapusDataToko(semua){
   KEC.forEach(k => { T[k[0]] = (TOKO[k[0]]||[]).filter(x => x[4]); sisaPdg += T[k[0]].length; T[k[0]].forEach(x => { if (x[0]) keep.add(x[0]); }); });
   const M = kosongMt(); let sisaMt = 0;
   MT_JENIS.forEach(j => { M[j[0]] = MTOKO[j[0]].filter(t => keep.has(t.id)); sisaMt += M[j[0]].length; });
+  M['pernah-order'] = (MTOKO['pernah-order']||[]).filter(t => keep.has(t.id) || (t.po && (T[t.po.kec]||[]).some(x => x[1]===t.po.nama))); sisaMt += M['pernah-order'].length;
   const sel = {}; Object.keys(TAGIHAN.sel||{}).forEach(k => { if (keep.has(k)) sel[k] = TAGIHAN.sel[k]; });
   if (!confirm('Hapus semua data toko KECUALI toko yang Ada tagihan?\n\n• Data Master Padang: '+(nPdg-sisaPdg)+' toko dihapus, '+sisaPdg+' toko Ada tagihan tetap\n• Master Toko: '+(nMt-sisaMt)+' toko dihapus, '+sisaMt+' toko Ada tagihan tetap\n• Toko Tidak ada tagihan luar kota: '+nLunas+' toko dihapus\n• Toko Ada tagihan luar kota: '+nTag+' toko tetap\n\nTidak bisa dibatalkan. Pastikan Backup sudah diunduh.')) return;
   TOKO = T; simpanMaster();
@@ -996,34 +1099,93 @@ function scrollAtas(box){
   if (window.ResizeObserver) { const ro = new ResizeObserver(ukur); ro.observe(box); const t = box.querySelector('table'); if (t) ro.observe(t); }
   else window.addEventListener('resize', ukur);
 }
+/* Edit toko di Data Master (menu Ada tagihan, kecamatan Padang): nama, kode, kecamatan, latitude, longitude. */
+function editTokoMaster(kec, nm, body){
+  const r0 = (TOKO[kec]||[]).find(x => x[1]===nm); if (!r0) return alert('Toko tidak ditemukan di master. Muat ulang halaman.');
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:14px';
+  const st = 'width:100%;font:inherit;padding:9px;border:1.5px solid var(--line);border-radius:6px;margin:4px 0 10px;background:#fff;box-sizing:border-box';
+  ov.innerHTML = '<div role="dialog" aria-modal="true" style="background:#fff;border-radius:10px;padding:18px;max-width:420px;width:100%;max-height:90vh;overflow:auto"><h3 style="margin:0 0 12px">Edit toko</h3>' +
+    '<label>Nama toko<input id="etn" style="'+st+';text-transform:uppercase" value="'+esc(r0[1])+'" autocomplete="off"></label>' +
+    '<label>Kode toko<input id="etk" style="'+st+';text-transform:uppercase" value="'+esc(r0[0]||'')+'" placeholder="isi kode" autocomplete="off"></label>' +
+    '<label>Kecamatan<select id="etc" style="'+st+'">'+KEC.map(k => '<option value="'+esc(k[0])+'"'+(k[0]===kec ? ' selected' : '')+'>'+esc(k[0])+' ('+k[2]+', Minggu '+k[1]+')</option>').join('')+'</select></label>' +
+    '<label>Latitude<input id="etla" inputmode="decimal" style="'+st+'" value="'+(r0[2]??'')+'" placeholder="-0.xxxxx"></label>' +
+    '<label>Longitude<input id="etlo" inputmode="decimal" style="'+st+'" value="'+(r0[3]??'')+'" placeholder="100.xxxxx"></label>' +
+    '<p class="sub" id="ete" style="color:#b42318;min-height:1.2em;margin:0 0 8px"></p><div class="bar"><button type="button" class="act" id="etno">Batal</button><button type="button" class="act pri" id="etok">Simpan</button></div></div>';
+  document.body.appendChild(ov);
+  const $e = i => ov.querySelector('#'+i), pesan = m => { $e('ete').textContent = m; };
+  $e('etno').onclick = () => ov.remove();
+  $e('etok').onclick = async () => {
+    const nama = $e('etn').value.replace(/\s+/g,' ').trim().toUpperCase(), kode = $e('etk').value.trim().toUpperCase(), ke = $e('etc').value;
+    let la = $e('etla').value, lo = $e('etlo').value;
+    if (/^\s*-?[\d.]+\s*,\s*-?[\d.]+\s*$/.test(la)) { const p = la.split(','); la = p[0]; lo = p[1]; }
+    const parse = s => { s = s.trim().replace(',', '.'); return s==='' ? null : (isFinite(s) ? parseFloat(s) : NaN); };
+    const LA = parse(la), LN = parse(lo);
+    if (!nama) return pesan('Nama toko tidak boleh kosong.');
+    if (Number.isNaN(LA)) return pesan('Latitude harus berupa angka.');
+    if (Number.isNaN(LN)) return pesan('Longitude harus berupa angka.');
+    if ((LA==null) !== (LN==null)) return pesan('Isi latitude dan longitude sekaligus, atau kosongkan keduanya.');
+    if (LA!=null && (Math.abs(LA)>90 || Math.abs(LN)>180)) return pesan('Koordinat di luar rentang (lat -90..90, long -180..180).');
+    if (ke!==kec) {
+      const kt = KEC.find(k => k[0]===ke), kd = KEC.find(k => k[0]===kec);
+      if (!confirm('Pindahkan '+nm+'?\n\nDari: '+kec+' ('+kd[2]+', Minggu '+kd[1]+')\nKe: '+ke+' ('+kt[2]+', Minggu '+kt[1]+')\n\nToko langsung pindah di rute kunjungan salesman Padang. Isian kunjungan yang belum diupload di HP salesman untuk kecamatan asal bisa ikut terhapus, jadi sebaiknya dipindah saat tidak ada kunjungan berjalan.')) return;
+    }
+    $e('etok').disabled = true;
+    if (fs) { try { const sn = await fs.getDoc(fs.doc(db,'config','master')); if (sn.exists() && sn.data().json) TOKO = JSON.parse(sn.data().json); } catch(e){} }
+    const row = (TOKO[kec]||[]).find(x => x[1]===nm);
+    const gagal = m => { $e('etok').disabled = false; pesan(m); };
+    if (!row) return gagal('Toko tidak ditemukan di master. Muat ulang halaman.');
+    if ((TOKO[ke]||[]).some(x => x!==row && x[1]===nama)) return gagal('Nama '+nama+' sudah ada di kecamatan '+ke+'.');
+    const dup = kode && Object.entries(TOKO).flatMap(([k,a]) => a.map(x => [k,x])).find(([k,x]) => x!==row && x[0]===kode);
+    if (dup) return gagal('Kode '+kode+' sudah dipakai toko '+dup[1][1]+' ('+dup[0]+').');
+    row[0] = kode; row[1] = nama; row[2] = LA; row[3] = LN; simpanMaster();
+    if (ke!==kec) {
+      const h = await pindahToko(kec, nama, ke);
+      if (h.err) { $e('etok').disabled = false; return pesan('Nama, kode, dan koordinat sudah tersimpan, tetapi pindah kecamatan gagal: '+h.err); }
+    }
+    /* Kalau kodenya juga ada di Master Toko, datanya di sana disamakan */
+    try { await mtMuat(); const m = kode ? mtSemua().find(t => t.id===kode) : null;
+      if (m) { const o = MTOKO[m.js].find(t => t.id===kode); o.nama = nama; o.lat = LA; o.lon = LN; if (mtPre(kode)==='PDG') o.kec = ke; await mtSimpan(); } } catch(e){}
+    try { await mtMuat(); const p = (MTOKO['pernah-order']||[]).find(t => t.po && t.po.kec===kec && t.po.nama===nm); if (p) { p.nama = nama; p.lat = LA; p.lon = LN; p.kec = ke; p.po = {kec:ke, nama}; if (kode) p.id = kode; await mtSimpan(); } } catch(e){}
+    ov.remove(); masterView(body);
+  };
+}
 function masterView(body){
   const total = Object.values(TOKO).reduce((n,a)=>n+a.length,0);
   let no = 0;
   const mtab = masterTab, isTag = x => !!x[4];
   const nTag = Object.values(TOKO).flat().filter(isTag).length, nNon = total - nTag;
   const pindahCell = (x, kec) => '<td><select class="pdh" data-kec="'+esc(kec)+'" data-nama="'+esc(x[1])+'" aria-label="Pindah kecamatan" style="width:100%;font:inherit;padding:6px 4px;border:1.5px solid var(--soft);border-radius:4px;background:#fff"><option value="">Pindah ke…</option>'+KEC.filter(k => k[0]!==kec).map(k => '<option value="'+esc(k[0])+'">'+esc(k[0])+' ('+k[2]+')</option>').join('')+'</select></td>';
-  const statusCells = (x, kec) => '<td><button type="button" class="act" '+(mtab==='tagihan' ? 'data-pl' : 'data-pb')+'="1" data-kec="'+esc(kec)+'" data-nama="'+esc(x[1])+'">'+(mtab==='tagihan' ? '✔ Lunas' : '↩ Batal lunas')+'</button></td>'+pindahCell(x, kec)+(mtab==='lunas' ? '<td><button type="button" class="mini del" data-kb="1" data-kec="'+esc(kec)+'" data-nama="'+esc(x[1])+'" data-kode="'+esc(x[0]||'')+'" title="Kembalikan ke Toko Wilayah (belum wajib dikunjungi)" aria-label="Kembalikan ke Toko Wilayah">✕</button></td>' : '');
-  const rows = KEC.map(([nama,mm,hari]) => { const t = (TOKO[nama]||[]).filter(x => isTag(x)===(mtab==='tagihan')); if (!t.length) return '';
+  const statusCells = (x, kec) => '<td><button type="button" class="act" '+(mtab==='tagihan' ? 'data-pl' : 'data-pb')+'="1" data-kec="'+esc(kec)+'" data-nama="'+esc(x[1])+'">'+(mtab==='tagihan' ? '✔ Lunas' : '↩ Batal lunas')+'</button></td>'+pindahCell(x, kec)+(mtab==='lunas' ? '<td><button type="button" class="mini del" data-kb="1" data-kec="'+esc(kec)+'" data-nama="'+esc(x[1])+'" data-kode="'+esc(x[0]||'')+'" title="Kembalikan ke Toko Wilayah (belum wajib dikunjungi)" aria-label="Kembalikan ke Toko Wilayah">✕</button></td>' : '<td><button type="button" class="mini" data-etm="1" data-kec="'+esc(kec)+'" data-nama="'+esc(x[1])+'">✎ Edit toko</button></td>');
+  let rows = KEC.map(([nama,mm,hari]) => { const t = (TOKO[nama]||[]).filter(x => isTag(x)===(mtab==='tagihan')); if (!t.length) return '';
     const nv = nextVisits(hari, mm);
-    return '<tr class="grp"><td colspan="'+(mtab==='lunas' ? 13 : 12)+'">'+esc(nama)+' · '+hari+' · Minggu '+mm+' · '+t.length+' toko</td></tr>' +
+    return '<tr class="grp"><td colspan="13">'+esc(nama)+' · '+hari+' · Minggu '+mm+' · '+t.length+' toko</td></tr>' +
       t.map((x,ix) => '<tr data-s="'+esc((x[1]+' '+(x[0]||'')+' '+nama+' '+hari).toLowerCase())+'"><td>'+(++no)+'</td><td class="l"><input class="nmi" value="'+esc(x[1])+'" data-kec="'+esc(nama)+'" data-n="'+esc(x[1])+'" aria-label="Nama toko" autocomplete="off" autocapitalize="characters" style="width:100%;min-width:150px;font:inherit;text-transform:uppercase;padding:6px 6px;border:1.5px solid var(--soft);border-radius:4px;background:#fff"></td><td class="kd"><input class="kdi" value="'+esc(x[0]||'')+'" data-kec="'+esc(nama)+'" data-n="'+esc(x[1])+'" placeholder="isi kode" autocomplete="off" autocapitalize="characters" style="width:100%;font:inherit;text-align:center;text-transform:uppercase;padding:6px 4px;border:1.5px solid var(--soft);border-radius:4px;background:#fff"></td><td class="l">'+esc(nama)+'</td><td>'+hari+'</td><td>'+mm+'</td><td>'+nv+'</td><td><input class="lli" inputmode="decimal" data-k="2" value="'+(x[2]??'')+'" data-kec="'+esc(nama)+'" data-n="'+esc(x[1])+'" placeholder="-0.xxxxx" autocomplete="off" style="width:100%;font:inherit;text-align:center;padding:6px 4px;border:1.5px solid var(--soft);border-radius:4px;background:#fff"></td><td><input class="lli" inputmode="decimal" data-k="3" value="'+(x[3]??'')+'" data-kec="'+esc(nama)+'" data-n="'+esc(x[1])+'" placeholder="100.xxxxx" autocomplete="off" style="width:100%;font:inherit;text-align:center;padding:6px 4px;border:1.5px solid var(--soft);border-radius:4px;background:#fff"></td>' +
         '<td class="pt">'+(x[2]!=null ? '<a class="maplink" target="_blank" rel="noopener" href="'+esc(geoUrl('geo:'+x[2]+','+x[3]))+'">📍 Peta</a>' : '-')+'</td>'+statusCells(x,nama)+'</tr>').join(''); }).join('');
+  /* Menu Ada tagihan: nama, kode, latitude, longitude hanya tampil sebagai teks. Diubah lewat tombol Edit toko. */
+  if (mtab==='tagihan') rows = rows.replace(/<input class="(?:nmi|kdi|lli)"[^>]*? value="([^"]*)"[^>]*>/g, (m, v) => v==='' ? '-' : v);
   const lainTag = (TAGIHAN.toko||[]).filter(t => t.kota!=='PDG').length, lainLunas = Object.values(TAGIHAN.lunas||{}).filter(l => l.kota!=='PDG' && !TAGSET.has(l.kode)).length;
   const lain = (mtab==='tagihan' ? (TAGIHAN.toko||[]) : Object.values(TAGIHAN.lunas||{}).filter(l => !TAGSET.has(l.kode))).filter(t => t.kota!=='PDG').sort((a,b) => a.kota.localeCompare(b.kota) || a.nama.localeCompare(b.nama));
   const wilCell = t => { const c = KODE_WIL[t.kota];
     if (c && c.length>1) return '<select data-sel="'+esc(t.kode)+'"><option value="">Pilih wilayah</option>'+c.map(w => '<option'+((TAGIHAN.sel||{})[t.kode]===w?' selected':'')+'>'+esc(w)+'</option>').join('')+'</select>';
     return esc(wilayahOf(t) || '(belum ditentukan)'); };
   const lainRows = lain.map((t,i) => '<tr data-s="'+esc((t.kode+' '+t.nama+' '+t.kota).toLowerCase())+'"><td>'+(i+1)+'</td><td class="l">'+esc(t.nama)+'</td><td class="l">'+esc(t.kode)+'</td><td>'+wilCell(t)+'</td>' +
-    (mtab==='tagihan' ? '<td style="text-align:right;white-space:nowrap">'+rp(t.sisa)+'</td><td><button type="button" class="act" data-lunas="'+esc(t.kode)+'">✔ Lunas</button></td>'
+    (mtab==='tagihan' ? '<td style="text-align:right;white-space:nowrap">'+rp(t.sisa)+'</td><td><button type="button" class="act" data-lunas="'+esc(t.kode)+'">✔ Lunas</button></td><td><button type="button" class="mini" data-etl="'+esc(t.kode)+'">✎ Edit toko</button></td>'
                       : '<td><button type="button" class="act" data-undo="'+esc(t.kode)+'" title="Dilunasi '+(t.tgl ? fmtTgl(t.tgl) : '')+'">↩ Batal lunas</button></td><td><button type="button" class="mini del" data-kb="1" data-kec="'+esc('')+'" data-nama="'+esc(t.nama)+'" data-kode="'+esc(t.kode)+'" title="Kembalikan ke Toko Wilayah (belum wajib dikunjungi)" aria-label="Kembalikan ke Toko Wilayah">✕</button></td>')+'</tr>').join('');
-  const lainHtml = lain.length ? '<h3 class="wk">Wilayah lain ('+lain.length+' toko)</h3><p class="sub">Toko di luar Padang tidak punya kecamatan; daftarnya mengikuti data tagihan.</p><div class="scroll pd"><table style="min-width:760px"><caption>Toko wilayah lain</caption><thead><tr><th style="width:48px">No.</th><th>Nama toko</th><th style="width:170px">Kode toko</th><th style="width:150px">Wilayah</th>'+(mtab==='tagihan' ? '<th style="width:140px">Sisa tagihan</th><th style="width:120px">Aksi</th>' : '<th style="width:140px">Batal lunas</th><th style="width:70px">X</th>')+'</tr></thead><tbody>'+lainRows+'</tbody></table></div>' : '';
+  const lainHtml = lain.length ? '<h3 class="wk">Wilayah lain ('+lain.length+' toko)</h3><p class="sub">Toko di luar Padang tidak punya kecamatan; daftarnya mengikuti data tagihan.</p><div class="scroll pd"><table style="min-width:760px"><caption>Toko wilayah lain</caption><thead><tr><th style="width:48px">No.</th><th>Nama toko</th><th style="width:170px">Kode toko</th><th style="width:150px">Wilayah</th>'+(mtab==='tagihan' ? '<th style="width:140px">Sisa tagihan</th><th style="width:120px">Aksi</th><th style="width:120px">Edit</th>' : '<th style="width:140px">Batal lunas</th><th style="width:70px">X</th>')+'</tr></thead><tbody>'+lainRows+'</tbody></table></div>' : '';
   body.innerHTML = '<p class="sub">Data master: '+total+' toko. Toko yang transaksi (Ya) masuk ke sini setelah admin menekan Mulai proses hasil kerja hari ini (tab Upload Salesman), di kecamatannya, dan tampil di jadwal kunjungan berikutnya. Kolom Hari, Minggu, dan Kunjungan berikutnya mengikuti jadwal kecamatan. Toko yang transaksi (Ya) otomatis masuk menu <b>Ada tagihan</b>; tekan <b>Lunas</b> untuk memindahkannya ke <b>Tidak ada tagihan</b> (tetap masuk rute kunjungan). Toko yang transaksi lagi kembali ke Ada tagihan. Untuk memindahkan toko ke kecamatan lain, pilih kecamatan tujuan di kolom <b>Pindah kecamatan</b>; rute salesman Padang ikut berubah.</p>' +
     '<div class="bar"><button class="act" id="mdl">⬇ Unduh master (Excel)</button><button class="act pri" id="mup">⬆ Upload Excel jadi master</button><input type="file" id="mf" accept=".xlsx,.xls" hidden></div>' +
     '<div class="tabs" role="group" aria-label="Status tagihan"><button data-mt="tagihan" aria-pressed="'+(mtab==='tagihan')+'">Ada tagihan ('+(nTag+lainTag)+')</button><button data-mt="lunas" aria-pressed="'+(mtab==='lunas')+'">Tidak ada tagihan ('+(nNon+lainLunas)+')</button></div>' +
     '<input id="ms" type="search" placeholder="Cari nama toko, kecamatan, atau hari (misal: kamis)…" autocomplete="off" style="width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px;margin-bottom:10px">' +
-    '<div class="scroll pd"><table style="min-width:1500px"><caption>Data master toko</caption><thead><tr><th style="width:48px">No.</th><th>Nama toko</th><th style="width:110px">Kode toko</th><th>Kecamatan</th><th style="width:80px">Hari</th><th style="width:70px">Minggu</th><th style="width:130px">Kunjungan berikutnya</th><th style="width:100px">Latitude</th><th style="width:100px">Longitude</th><th style="width:100px">Peta</th><th style="width:140px">'+(mtab==='tagihan' ? 'Lunas' : 'Batal lunas')+'</th><th style="width:200px">Pindah kecamatan</th>'+(mtab==='lunas' ? '<th style="width:70px">X</th>' : '')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+(mtab==='lunas' ? 13 : 12)+'" class="empty">'+(mtab==='tagihan' ? 'Tidak ada toko master yang punya tagihan.' : 'Tidak ada toko master tanpa tagihan.')+'</td></tr>')+'</tbody></table></div>' + lainHtml;
+    '<div class="scroll pd"><table style="min-width:1500px"><caption>Data master toko</caption><thead><tr><th style="width:48px">No.</th><th>Nama toko</th><th style="width:110px">Kode toko</th><th>Kecamatan</th><th style="width:80px">Hari</th><th style="width:70px">Minggu</th><th style="width:130px">Kunjungan berikutnya</th><th style="width:100px">Latitude</th><th style="width:100px">Longitude</th><th style="width:100px">Peta</th><th style="width:140px">'+(mtab==='tagihan' ? 'Lunas' : 'Batal lunas')+'</th><th style="width:200px">Pindah kecamatan</th>'+(mtab==='lunas' ? '<th style="width:70px">X</th>' : '<th style="width:120px">Edit</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="13" class="empty">'+(mtab==='tagihan' ? 'Tidak ada toko master yang punya tagihan.' : 'Tidak ada toko master tanpa tagihan.')+'</td></tr>')+'</tbody></table></div>' + lainHtml;
   body.querySelectorAll('.scroll.pd').forEach(scrollAtas);
   body.querySelectorAll('[data-mt]').forEach(b => b.onclick = () => { masterTab = b.dataset.mt; masterView(body); });
+  body.querySelectorAll('[data-etm]').forEach(b => b.onclick = () => editTokoMaster(b.dataset.kec, b.dataset.nama, body));
+  body.querySelectorAll('[data-etl]').forEach(b => b.onclick = async () => {
+    const kode = b.dataset.etl; await mtMuat();
+    if (!mtSemua().some(x => x.id===kode)) return alert('Toko ini ('+kode+') belum ada di Master toko, jadi belum bisa diedit di sini.\n\nUpload dulu lewat Master toko > Upload Excel dengan kode toko yang sama.');
+    mtEdit(kode, () => masterView(body));
+  });
   body.querySelectorAll('[data-lunas]').forEach(b => b.onclick = () => { if (tandaiLunas(b.dataset.lunas)) barisDipindah(b, body); });
   body.querySelectorAll('[data-undo]').forEach(b => b.onclick = () => { if (batalLunas(b.dataset.undo)) barisDipindah(b, body); });
   body.querySelectorAll('[data-kb]').forEach(b => b.onclick = () => { if (kembalikanBelumWajib(b.dataset.kode, b.dataset.nama)) barisDipindah(b, body); });
@@ -1161,10 +1323,10 @@ function tabel(cfg){
   const html = '<a class="back" href="'+back+'">‹ '+esc(backLabel)+'</a><div class="tabs" role="group" aria-label="Minggu kunjungan">' +
     weeks.map(w=>'<button data-w="'+w+'" aria-pressed="'+(w===minggu)+'">Minggu '+w+'</button>').join('') +
     '<label class="bln">Bulan <input type="month" id="bln" value="'+bulan+'"></label></div>' +
-    '<div class="scroll"><table><caption>'+esc(caption)+'</caption><thead><tr><th style="width:48px">No.</th><th style="min-width:150px">nama toko</th><th style="min-width:190px">Alamat</th><th style="width:120px">Check-in</th><th style="width:130px">Status tagihan</th><th style="width:130px">Transaksi</th><th style="min-width:160px">Keterangan</th><th style="width:90px">Aksi</th></tr></thead><tbody>' +
+    '<div class="scroll"><table><caption>'+esc(caption)+'</caption><thead><tr><th style="width:48px">No.</th><th style="min-width:150px">nama toko</th><th style="min-width:190px">Alamat</th><th style="width:120px">Check-in</th><th style="width:130px">Status tagihan</th><th style="width:130px">Transaksi order</th><th style="min-width:160px">Keterangan</th><th style="width:90px">Aksi</th></tr></thead><tbody>' +
     Array.from({length:NR},(_,i)=>'<tr data-i="'+i+'"><td>'+(i+1)+'</td>' +
       '<td><input class="k" data-f="n" autocomplete="off" aria-label="Nama toko '+(i+1)+'"></td><td class="al"></td><td class="ck"></td><td class="sg"></td>' +
-      '<td><select data-f="t" aria-label="Transaksi '+(i+1)+'"><option value="">Pilih</option><option value="ya">Ya</option><option value="tidak">Tidak</option></select></td>' +
+      '<td><select data-f="t" aria-label="Transaksi order '+(i+1)+'"><option value="">Pilih</option><option value="ya">Ya</option><option value="tidak">Tidak</option></select></td>' +
       '<td><input class="k" data-f="k" aria-label="Keterangan '+(i+1)+'"></td><td class="ax"><button type="button" class="mini del" data-del="1" hidden aria-label="Hapus kunjungan '+(i+1)+'">🗑 Hapus</button></td></tr>').join('') +
     '</tbody></table></div>' +
     '<div class="bar"><button type="button" class="act pri" id="up">⬆ Upload kunjungan hari ini</button><span id="ups" class="sub"></span></div>' +
@@ -1224,13 +1386,13 @@ function tabel(cfg){
     if (kurang.length) {
       kurang.forEach(tr => tr.classList.add('bad'));
       const rinci = kurang.map(tr => {
-        const m = []; if (!tr.dataset.g) m.push('Check-in'); if (!q(tr,'t').value) m.push('Transaksi'); if (!q(tr,'k').value.trim()) m.push('Keterangan');
+        const m = []; if (!tr.dataset.g) m.push('Check-in'); if (!q(tr,'t').value) m.push('Transaksi order'); if (!q(tr,'k').value.trim()) m.push('Keterangan');
         return (+tr.dataset.i+1)+' ('+m.join(', ')+')';
       }).join('\n');
       const no = kurang.map(tr => +tr.dataset.i + 1).join(', ');
       kurang[0].scrollIntoView({block:'center', behavior:'smooth'});
       us.textContent = '⚠ Upload dibatalkan: Check-in, Transaksi, dan Keterangan belum lengkap (baris '+no+').';
-      if (!(await peringatanWajib('Pastikan setiap toko sudah CHECK-IN dan kolom TRANSAKSI serta KETERANGAN diisi.\nJika tidak lengkap, data tidak bisa diupload.\n\nYang belum lengkap (nomor baris):\n'+rinci))) return;
+      if (!(await peringatanWajib('Pastikan setiap toko sudah CHECK-IN dan kolom TRANSAKSI ORDER serta KETERANGAN diisi.\nJika tidak lengkap, data tidak bisa diupload.\n\nYang belum lengkap (nomor baris):\n'+rinci))) return;
       trs.forEach(tr => tr.classList.remove('bad')); us.textContent = '';
     }
     const d = new Date(), p2 = n => String(n).padStart(2,'0'), tgl = d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
@@ -1322,12 +1484,12 @@ function tabelW(cfg){
   const NR = Math.max(60, toko.length);
   const rows = Array.from({length:NR},(_,i)=>'<tr data-i="'+i+'"><td>'+(i+1)+'</td>' +
     '<td><input class="k" data-f="n" autocomplete="off" aria-label="Nama toko '+(i+1)+'"></td><td class="al"></td><td class="ck"></td><td class="sg"></td>' +
-    '<td><select data-f="t" aria-label="Transaksi '+(i+1)+'"><option value="">Pilih</option><option value="ya">Ya</option><option value="tidak">Tidak</option></select></td>' +
+    '<td><select data-f="t" aria-label="Transaksi order '+(i+1)+'"><option value="">Pilih</option><option value="ya">Ya</option><option value="tidak">Tidak</option></select></td>' +
     '<td><input class="k" data-f="k" aria-label="Keterangan '+(i+1)+'"></td>' +
     '<td class="ax"><button type="button" class="mini del" data-del="1" hidden aria-label="Hapus kunjungan '+(i+1)+'">🗑 Hapus</button><button type="button" class="mini del" data-hide="1" hidden aria-label="Sembunyikan toko wajib '+(i+1)+' hari ini">✕</button></td>' +
     '<td class="tg"></td></tr>').join('');
   $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a>' +
-    '<div class="scroll"><table><caption>'+esc(wil.toLowerCase())+'</caption><thead><tr><th style="width:48px">No.</th><th style="min-width:150px">nama toko</th><th style="min-width:190px">Alamat</th><th style="width:120px">Check-in</th><th style="width:140px">Status tagihan</th><th style="width:130px">Transaksi</th><th style="min-width:160px">Keterangan</th><th style="width:90px">Aksi</th><th style="width:110px">Tanggal</th></tr></thead><tbody>'+rows+'</tbody></table></div>' +
+    '<div class="scroll"><table><caption>'+esc(wil.toLowerCase())+'</caption><thead><tr><th style="width:48px">No.</th><th style="min-width:150px">nama toko</th><th style="min-width:190px">Alamat</th><th style="width:120px">Check-in</th><th style="width:140px">Status tagihan</th><th style="width:130px">Transaksi order</th><th style="min-width:160px">Keterangan</th><th style="width:90px">Aksi</th><th style="width:110px">Tanggal</th></tr></thead><tbody>'+rows+'</tbody></table></div>' +
     '<div class="bar"><button type="button" class="act pri" id="up">⬆ Upload kunjungan</button><span id="ups" class="sub"></span></div>' +
     '<p class="foot">Toko wajib ('+toko.length+' toko) terisi otomatis dari atas, sisa baris kosong untuk kunjungan tambahan (total '+NR+' baris). Tekan Check-in saat berada di toko: titik GPS, jam, dan tanggal tersimpan. Tanggal terkunci saat check-in dan tidak berubah walaupun hari berganti; kalau salah check-in, tekan Batal di samping jam check-in. Transaksi baru bisa diisi setelah check-in, sedangkan Keterangan bisa diisi kapan saja. Untuk setiap toko yang namanya terisi, Check-in, Transaksi, dan Keterangan WAJIB lengkap, kalau tidak upload tidak bisa dilakukan. Isian tidak hilang karena ganti hari; hanya Upload yang mengosongkannya. Setelah upload, toko wajib hilang dari tabel sampai pukul 00:00, tetapi kunjungan baru tetap bisa diisi. Toko wajib yang tidak dikunjungi bisa disembunyikan hari itu dengan tombol ✕ (perlu password). Kunjungan tambahan yang salah isi bisa dihapus dengan tombol Hapus. Semua isian tersimpan otomatis.</p>';
 
@@ -1393,13 +1555,13 @@ function tabelW(cfg){
     if (kurang.length) {
       kurang.forEach(tr => tr.classList.add('bad'));
       const rinci = kurang.map(tr => {
-        const m = []; if (!tr.dataset.g) m.push('Check-in'); if (!q(tr,'t').value) m.push('Transaksi'); if (!q(tr,'k').value.trim()) m.push('Keterangan');
+        const m = []; if (!tr.dataset.g) m.push('Check-in'); if (!q(tr,'t').value) m.push('Transaksi order'); if (!q(tr,'k').value.trim()) m.push('Keterangan');
         return (+tr.dataset.i+1)+' ('+m.join(', ')+')';
       }).join('\n');
       const no = kurang.map(tr => +tr.dataset.i + 1).join(', ');
       kurang[0].scrollIntoView({block:'center', behavior:'smooth'});
       us.textContent = '⚠ Upload dibatalkan: Check-in, Transaksi, dan Keterangan belum lengkap (baris '+no+').';
-      if (!(await peringatanWajib('Pastikan setiap toko sudah CHECK-IN dan kolom TRANSAKSI serta KETERANGAN diisi.\nJika tidak lengkap, data tidak bisa diupload.\n\nYang belum lengkap (nomor baris):\n'+rinci))) return;
+      if (!(await peringatanWajib('Pastikan setiap toko sudah CHECK-IN dan kolom TRANSAKSI ORDER serta KETERANGAN diisi.\nJika tidak lengkap, data tidak bisa diupload.\n\nYang belum lengkap (nomor baris):\n'+rinci))) return;
       trs.forEach(tr => tr.classList.remove('bad')); us.textContent = '';
     }
     const d = new Date(), p2 = n => String(n).padStart(2,'0'), tgl = hariIniStr(), ts = Date.now();
@@ -1495,7 +1657,7 @@ function route(){
     askPw().then(ok => { if (ok) { pusatOk = true; pusatPage(); window.scrollTo(0,0); } else if (location.hash==='#pusat-data') location.hash = ''; });
     return;
   }
-  if (w==='master-toko') return masterToko(ks, sub);
+  if (w==='master-toko') return ks==='pernah-order' ? masterTokoPO() : masterToko(ks, sub);
   if (w==='padang') return ks ? detail(ks) : kecList();
   const nm = WILAYAH.find(x=>slug(x)===w); if (!nm) return home();
   return detailWilayah(nm);
