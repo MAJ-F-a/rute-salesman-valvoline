@@ -119,6 +119,9 @@ td input.k[data-f=n]:disabled{color:var(--ink);-webkit-text-fill-color:var(--ink
 tr.bad td{background:#fdecea !important}tr.bad select,tr.bad input.k{border-color:#b42318 !important;outline:2px solid #b42318}
 button.del{color:#b42318;border-color:#b42318;font-weight:600;white-space:nowrap}button.del[hidden]{display:none}
 button.cb{color:#b42318;border-color:#b42318;font-weight:600;white-space:nowrap}
+.mtf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.mtf input,.mtf select{font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px;background:#fff;min-width:0;width:100%}.mtf .act{grid-column:1/-1}
+a.pusat.mtb{background:linear-gradient(120deg,#073d27 0%,#0b5a3a 50%,#1f8f5f 100%)}a.pusat.mtb b{font-size:clamp(28px,8vw,40px)}
+.tile.mt{background:linear-gradient(145deg,#0b5a3a 0%,#1f8f5f 100%)}.tile.mt:hover,.tile.mt:focus-visible{background:linear-gradient(145deg,#0f6e47 0%,#27a870 100%)}
 </style>
 </head>
 <body>
@@ -209,6 +212,128 @@ const wilayahOf = t => { const c = KODE_WIL[t.kota]; if (!c) return null; return
 const autoToko = w => [...(TAGIHAN.toko||[]), ...Object.values(TAGIHAN.lunas||{}).filter(l => !TAGSET.has(l.kode))].filter(t => wilayahOf(t)===w).sort((a,b)=>a.nama.localeCompare(b.nama)).map(t => [t.kode, t.nama, null, null]);
 const padangTag = () => KEC.reduce((n,k) => n + (TOKO[k[0]]||[]).filter(x => x[4]).length, 0);
 
+/* ============ MASTER TOKO (Retail / Semi Grosir / Grosir) ============ */
+const MT_JENIS = [['retail','Toko Retail'],['semi-grosir','Toko Semi Grosir'],['grosir','Toko Grosir']];
+let MTOKO = {retail:[], 'semi-grosir':[], grosir:[]};
+const mtNorm = o => { const r = {retail:[], 'semi-grosir':[], grosir:[]}; MT_JENIS.forEach(j => { if (o && Array.isArray(o[j[0]])) r[j[0]] = o[j[0]]; }); return r; };
+try { const m = localStorage.getItem('mtoko'); if (m) MTOKO = mtNorm(JSON.parse(m)); } catch(e){}
+async function mtMuat(){
+  if (!fs) return;
+  try { const sn = await fs.getDoc(fs.doc(db,'config','mtoko')); if (sn.exists() && sn.data().json) { MTOKO = mtNorm(JSON.parse(sn.data().json)); try { localStorage.setItem('mtoko', JSON.stringify(MTOKO)); } catch(e){} } } catch(e){}
+}
+function mtSimpan(){
+  const j = JSON.stringify(MTOKO);
+  try { localStorage.setItem('mtoko', j); } catch(e){}
+  if (fs) return fs.setDoc(fs.doc(db,'config','mtoko'), {json:j, ts:Date.now()}).then(()=>{ setSync('Tersambung ke Firebase','ok'); return true; }).catch(()=>{ setSync('Gagal menyimpan master toko','warn'); return false; });
+  return Promise.resolve(true);
+}
+const MT_KAT = {'retail':'Retail','semi grosir':'Semi Grosir','semi-grosir':'Semi Grosir','grosir':'Grosir'};
+const mtBucket = {'Retail':'retail','Semi Grosir':'semi-grosir','Grosir':'grosir'};
+const mtSemua = () => MT_JENIS.flatMap(j => MTOKO[j[0]].map(t => ({...t, js:j[0], kat:j[1].replace('Toko ','')})));
+const mtPre = id => String(id).split('-')[0].toUpperCase();
+const mtWil = t => { const c = KODE_WIL[mtPre(t.id)]; return !c ? null : c.length===1 ? c[0] : ((TAGIHAN.sel||{})[t.id]||null); };
+const mtMaps = t => (t.lat!=null && t.lat!=='' && t.lon!=null) ? '<a class="maplink" target="_blank" rel="noopener" href="https://www.google.com/maps?q='+t.lat+','+t.lon+'">📍 Buka Google Maps</a>' : '-';
+const mtStatus = t => { if (mtPre(t.id)==='PDG') { for (const k of KEC) { const x = (TOKO[k[0]]||[]).find(y => y[0]===t.id); if (x) return x[4] ? 'ada' : 'tidak'; } return null; } return TAGSET.has(t.id) ? 'ada' : LUNASSET.has(t.id) ? 'tidak' : null; };
+let mtOk = false, mtLap = '', wilSel = null, mtQ = '';
+const mtPw = async () => mtOk || (mtOk = await askPw('Master toko','Masukkan password.','Buka'));
+function mtJadikanWajib(t){
+  if (mtPre(t.id)==='PDG') { (TOKO[t.kec] = TOKO[t.kec]||[]).push([t.id, t.nama, t.lat!=null ? t.lat : null, t.lon!=null ? t.lon : null]); calcBaris(); simpanMaster(); }
+  else setTagihan({...TAGIHAN, lunas:{...(TAGIHAN.lunas||{}), [t.id]:{kode:t.id, kota:mtPre(t.id), nama:t.nama, sisa:0, tgl:hariIniStr()}}});
+}
+function mtKeluarWajib(t){
+  const id = t.id;
+  if (mtPre(id)==='PDG') { let ch = false; KEC.forEach(k => { const a = TOKO[k[0]]||[], b = a.filter(x => x[0]!==id); if (b.length!==a.length) { TOKO[k[0]] = b; ch = true; } }); if (ch) { calcBaris(); simpanMaster(); } }
+  else if (TAGSET.has(id) || LUNASSET.has(id)) { const lunas = {...(TAGIHAN.lunas||{})}; delete lunas[id]; setTagihan({...TAGIHAN, toko:(TAGIHAN.toko||[]).filter(x => x.kode!==id), lunas}); }
+}
+async function mtUpload(file){
+  let X; try { X = await loadXL(); } catch(e){ return alert('Library Excel gagal dimuat. Cek koneksi internet.'); }
+  let rows; try { const wb = X.read(await file.arrayBuffer()); rows = X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''}); } catch(e){ return alert('File Excel tidak bisa dibaca.'); }
+  await mtMuat();
+  const pick = (r,ns) => { for (const k of Object.keys(r)) if (ns.includes(k.trim().toLowerCase())) return String(r[k]).trim(); return ''; };
+  const kec = new Map(KEC.map(k => [k[0].toLowerCase(), k[0]])), seen = new Set(), tolak = [];
+  let baru = 0, upd = 0;
+  rows.forEach((r,i) => {
+    const no = i+2, id = pick(r,['id','id toko','kode toko','kode']).toUpperCase(), nama = pick(r,['nama toko','nama']);
+    const kat = MT_KAT[pick(r,['kategori']).toLowerCase()], pre = id.split('-')[0], k = kec.get(pick(r,['kecamatan']).toLowerCase());
+    const la = pick(r,['latitude','lat']).replace(',','.'), lo = pick(r,['longitude','long','lon']).replace(',','.');
+    let err = '';
+    if (!id) err = 'ID kosong'; else if (!id.includes('-') || !KODE_WIL[pre]) err = 'ID tidak berawalan kode wilayah'; else if (seen.has(id)) err = 'ID ganda dalam file';
+    else if (!nama) err = 'Nama toko kosong'; else if (!kat) err = 'Kategori kosong/salah (Retail, Semi Grosir, Grosir)';
+    else if (pre==='PDG' && !k) err = 'Kecamatan wajib untuk kode PDG dan harus salah satu dari 12 kecamatan Padang';
+    else if ((la==='') !== (lo==='')) err = 'Latitude dan Longitude harus diisi dua-duanya';
+    else if (la!=='' && (isNaN(+la) || isNaN(+lo) || Math.abs(+la)>90 || Math.abs(+lo)>180)) err = 'Latitude/Longitude bukan angka valid';
+    if (err) { tolak.push('Baris '+no+(id ? ' ('+id+')' : '')+': '+err); return; }
+    seen.add(id);
+    let lama = null; MT_JENIS.forEach(j => { const x = MTOKO[j[0]].find(t => t.id===id); if (x) { lama = x; MTOKO[j[0]] = MTOKO[j[0]].filter(t => t!==x); } });
+    MTOKO[mtBucket[kat]].push({id, nama, lat: la!=='' ? +la : (lama ? lama.lat : null), lon: lo!=='' ? +lo : (lama ? lama.lon : null), kec: pre==='PDG' ? k : '', izin: lama ? !!lama.izin : false});
+    lama ? upd++ : baru++;
+  });
+  const cnt = {}; mtSemua().forEach(t => { const n = t.nama.toLowerCase(); cnt[n] = (cnt[n]||0)+1; });
+  const kembar = Object.keys(cnt).filter(n => cnt[n]>1).length;
+  await mtSimpan();
+  mtLap = '<p class="sub"><b>Hasil upload:</b> '+baru+' toko baru, '+upd+' diperbarui, '+tolak.length+' ditolak.'+(kembar ? ' Peringatan: '+kembar+' nama toko sama dengan ID berbeda.' : '')+'</p>' + (tolak.length ? '<div class="scroll" style="padding:8px 12px;border:1.5px solid #b42318;margin-bottom:12px"><b style="color:#b42318">Baris ditolak (perbaiki lalu upload ulang):</b><br>'+tolak.map(esc).join('<br>')+'</div>' : '');
+  masterMenu();
+}
+async function mtTemplate(){
+  const X = await loadXL(), wb = X.utils.book_new();
+  X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet([['ID toko','Nama toko','Latitude','Longitude','Kecamatan','Kategori'],['PDG-CTH-NON-001','CONTOH MOTOR',-0.94,100.36,'Padang Timur','Retail']]), 'Toko');
+  X.writeFile(wb, 'template-master-toko.xlsx');
+}
+function masterMenu(){
+  mtOk = false;
+  const tot = mtSemua().length;
+  $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a><h2>Master toko</h2><p class="sub">Toko hanya bisa didaftarkan lewat upload Excel. Kolom: ID toko, Nama toko, Latitude, Longitude, Kecamatan (wajib untuk kode PDG), Kategori (Retail / Semi Grosir / Grosir).</p>' +
+    '<div class="bar"><button class="act pri" id="mtup">⬆ Upload Excel</button><button class="act" id="mttp">⬇ Unduh template</button><input type="file" id="mtfile" accept=".xlsx,.xls" hidden></div>' + mtLap +
+    '<div class="grid">' + MT_JENIS.map(j => '<a class="tile mt" href="#master-toko/'+j[0]+'"><b>'+esc(j[1])+'</b><small>'+MTOKO[j[0]].length+' toko</small></a>').join('') +
+    '<a class="tile mt" href="#master-toko/all"><b>All toko</b><small>'+tot+' toko</small></a></div>';
+  const f = document.getElementById('mtfile');
+  document.getElementById('mttp').onclick = () => mtTemplate();
+  document.getElementById('mtup').onclick = async () => { if (await mtPw()) f.click(); };
+  f.onchange = () => { if (f.files[0]) mtUpload(f.files[0]); f.value = ''; };
+}
+function masterToko(js){
+  if (!js) return masterMenu();
+  const all = js==='all', jn = MT_JENIS.find(x => x[0]===js);
+  if (!all && !jn) return masterMenu();
+  mtQ = '';
+  const render = () => {
+    const list = mtSemua().filter(t => all || t.js===js).sort((a,b) => a.nama.localeCompare(b.nama)), nB = list.filter(t => !t.izin).length;
+    $app.innerHTML = '<a class="back" href="#master-toko">‹ Master toko</a><h2>'+(all ? 'All toko' : esc(jn[1]))+'</h2><p class="sub">'+list.length+' toko, '+nB+' belum diizinkan. Toko baru masuk Pusat Data setelah diizinkan.</p>' +
+      (nB ? '<div class="bar"><button class="act pri" id="izall">✓ Izinkan semua ('+nB+')</button></div>' : '') +
+      (list.length ? '<input id="mtq" type="search" placeholder="Cari nama toko atau ID toko…" value="'+esc(mtQ)+'" autocomplete="off" style="width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px;margin:4px 0 6px"><p class="sub" id="mtqn" style="margin-bottom:8px"></p><div class="scroll pd"><table style="min-width:'+(all?1000:880)+'px"><caption>'+(all ? 'All toko' : esc(jn[1]))+'</caption><thead><tr><th style="width:48px">No.</th><th style="width:150px">ID toko</th><th>Nama toko</th><th style="width:90px">Latitude</th><th style="width:90px">Longitude</th><th style="width:120px">Kecamatan</th><th style="width:170px">Peta</th>'+(all ? '<th style="width:100px">Kategori</th>' : '')+'<th style="width:110px">Izin</th>'+(all ? '<th style="width:50px">X</th>' : '')+'</tr></thead><tbody>' +
+        list.map((t,i) => '<tr data-s="'+esc((t.nama+' '+t.id).toLowerCase())+'"><td>'+(i+1)+'</td><td class="l">'+esc(t.id)+'</td><td class="l">'+esc(t.nama)+'</td><td>'+(t.lat!=null ? esc(t.lat) : '-')+'</td><td>'+(t.lon!=null ? esc(t.lon) : '-')+'</td><td>'+esc(t.kec||'-')+'</td><td>'+mtMaps(t)+'</td>'+(all ? '<td>'+esc(t.kat)+'</td>' : '')+'<td>'+(t.izin ? '✓ Diizinkan' : '<button type="button" class="mini" data-iz="'+esc(t.id)+'">Izinkan</button>')+'</td>'+(all ? '<td><button type="button" class="mini del" data-x="'+esc(t.id)+'" aria-label="Hapus toko">×</button></td>' : '')+'</tr>').join('') + '</tbody></table></div>' : '<p class="empty">Belum ada toko. Upload Excel di halaman Master toko.</p>');
+    const tandai = async ids => { if (!(await mtPw())) return; await mtMuat(); mtSemua().filter(t => ids.includes(t.id)).forEach(t => { MTOKO[t.js].find(x => x.id===t.id).izin = true; }); await mtSimpan(); render(); };
+    $app.querySelectorAll('[data-iz]').forEach(b => b.onclick = () => tandai([b.dataset.iz]));
+    const q = document.getElementById('mtq');
+    if (q) { const sar = () => { mtQ = q.value; const v = q.value.trim().toLowerCase(); let n = 0; $app.querySelectorAll('tbody tr').forEach(tr => { const ok = !v || tr.dataset.s.includes(v); tr.hidden = !ok; if (ok) tr.cells[0].textContent = ++n; }); document.getElementById('mtqn').textContent = v ? n+' toko cocok' : ''; }; q.oninput = sar; sar(); }
+    const ia = document.getElementById('izall'); if (ia) ia.onclick = () => tandai(list.filter(t => !t.izin).map(t => t.id));
+    $app.querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
+      const t = mtSemua().find(x => x.id===b.dataset.x); if (!t || !(await mtPw())) return;
+      if (!confirm('Hapus "'+t.nama+'" ('+t.id+')?\n\nToko juga hilang dari Pusat Data dan rute salesman.')) return;
+      await mtMuat(); mtKeluarWajib(t); MTOKO[t.js] = MTOKO[t.js].filter(x => x.id!==t.id); await mtSimpan(); render();
+    });
+  };
+  render();
+  mtMuat().then(() => { if (location.hash==='#master-toko/'+js && document.activeElement.id!=='mtq' && !document.activeElement.closest('button')) render(); });
+}
+function wilayahView(body){
+  const sem = mtSemua().filter(t => t.izin), tabel = (arr, aksi) => '<div class="scroll pd"><table style="min-width:760px"><thead><tr><th style="width:48px">No.</th><th style="width:150px">ID toko</th><th>Nama toko</th><th style="width:120px">Kecamatan</th><th style="width:100px">Kategori</th><th style="width:170px">Peta</th>'+aksi[0]+'</tr></thead><tbody>' + arr.map((t,i) => '<tr><td>'+(i+1)+'</td><td class="l">'+esc(t.id)+'</td><td class="l">'+esc(t.nama)+'</td><td>'+esc(t.kec||'-')+'</td><td>'+esc(t.kat)+'</td><td>'+mtMaps(t)+'</td>'+aksi[1](t)+'</tr>').join('') + '</tbody></table></div>';
+  if (!wilSel) {
+    const tanpa = sem.filter(t => !mtWil(t));
+    body.innerHTML = '<p class="sub">Toko yang sudah diizinkan di Master toko tampil di wilayahnya. Toko belum wajib dikunjungi sampai tombol <b>Jadikan wajib</b> ditekan.</p><div class="grid">' + WILAYAH.map(w => { const n = sem.filter(t => mtWil(t)===w); return '<a class="tile" href="javascript:void(0)" data-w="'+esc(w)+'"><b>'+esc(w)+'</b><small>'+n.filter(t => !mtStatus(t)).length+' belum wajib · '+n.filter(t => mtStatus(t)).length+' wajib</small></a>'; }).join('') + '</div>' +
+      (tanpa.length ? '<h3 class="wk">Pilih wilayah ('+tanpa.length+' toko)</h3>' + tabel(tanpa, ['<th style="width:170px">Wilayah</th>', t => '<td><select data-sel="'+esc(t.id)+'"><option value="">Pilih wilayah</option>'+(KODE_WIL[mtPre(t.id)]||[]).map(w => '<option>'+esc(w)+'</option>').join('')+'</select></td>']) : '');
+    body.querySelectorAll('[data-w]').forEach(a => a.onclick = () => { wilSel = a.dataset.w; wilayahView(body); });
+    body.querySelectorAll('[data-sel]').forEach(se => se.onchange = () => { if (se.value) { setTagihan({...TAGIHAN, sel:{...(TAGIHAN.sel||{}), [se.dataset.sel]:se.value}}); wilayahView(body); } });
+    return;
+  }
+  const n = sem.filter(t => mtWil(t)===wilSel), belum = n.filter(t => !mtStatus(t)), wajib = n.filter(t => mtStatus(t));
+  body.innerHTML = '<a class="back" href="javascript:void(0)" id="wback">‹ Semua wilayah</a><h2>'+esc(wilSel)+'</h2>' +
+    '<h3 class="wk">Belum wajib dikunjungi ('+belum.length+')</h3>' + (belum.length ? tabel(belum, ['<th style="width:170px">Aksi</th>', t => '<td><button type="button" class="act" data-wj="'+esc(t.id)+'">Jadikan wajib</button></td>']) : '<p class="empty">Tidak ada.</p>') +
+    '<h3 class="wk">Wajib dikunjungi ('+wajib.length+')</h3>' + (wajib.length ? tabel(wajib, ['<th style="width:130px">Status</th><th style="width:50px">X</th>', t => '<td>'+(mtStatus(t)==='ada' ? 'Ada tagihan' : 'Tidak ada tagihan')+'</td><td><button type="button" class="mini del" data-kb="'+esc(t.id)+'" aria-label="Kembalikan ke belum wajib">×</button></td>']) : '<p class="empty">Tidak ada.</p>');
+  document.getElementById('wback').onclick = () => { wilSel = null; wilayahView(body); };
+  body.querySelectorAll('[data-wj]').forEach(b => b.onclick = () => { const t = mtSemua().find(x => x.id===b.dataset.wj); if (t) { mtJadikanWajib(t); setTimeout(() => wilayahView(body), 30); } });
+  body.querySelectorAll('[data-kb]').forEach(b => b.onclick = () => { const t = mtSemua().find(x => x.id===b.dataset.kb); if (t && confirm('Kembalikan "'+t.nama+'" ke belum wajib dikunjungi?')) { mtKeluarWajib(t); setTimeout(() => wilayahView(body), 30); } });
+}
 /* ============ 3. PENYIMPANAN (Firebase atau lokal) ============ */
 const $app = document.getElementById('app'), $sync = document.getElementById('sync');
 let fs = null, db = null, unsub = null;
@@ -328,6 +453,7 @@ function home(){
   $app.innerHTML = '<a class="pusat" href="#pusat-data"><b>PUSAT DATA</b><small>🔒 perlu password</small></a>' +
     '<h2>Pilih wilayah</h2><p class="sub">Ketuk wilayah untuk melihat daftar kunjungan.</p><div class="grid">' +
     WILAYAH.map(w => '<a class="tile'+(w==='Padang'?' on':'')+'" href="#'+slug(w)+'"><b>'+esc(w)+'</b><small>'+(w==='Padang'?'12 kecamatan · '+padangTag()+' tagih':'6 hari · '+autoToko(w).length+' toko')+'</small></a>').join('') + '</div>' +
+    '<a class="pusat mtb" href="#master-toko" style="margin:26px 0 0"><b>MASTER TOKO</b><small>Retail · Semi Grosir · Grosir · All toko</small></a>' +
     '<div style="margin:26px 0 8px;text-align:center"><button type="button" class="act" id="hentikan">⏻ Hentikan aplikasi</button></div>';
   document.getElementById('hentikan').onclick = () => ubahSaklar(true);
 }
@@ -704,10 +830,10 @@ function batalLunas(kode){
 let pusatTab = 'master', upBln = infoHariIni().bulan;
 function pusatPage(){
   $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a><h2>Pusat Data</h2><div class="tabs">' +
-    '<button data-pt="master" aria-pressed="'+(pusatTab==='master')+'">Data Master</button><button data-pt="upload" aria-pressed="'+(pusatTab==='upload')+'">Upload Salesman</button><button data-pt="backup" aria-pressed="'+(pusatTab==='backup')+'">Backup</button></div><div id="pbody"></div>';
+    '<button data-pt="master" aria-pressed="'+(pusatTab==='master')+'">Data Master</button><button data-pt="upload" aria-pressed="'+(pusatTab==='upload')+'">Upload Salesman</button><button data-pt="wilayah" aria-pressed="'+(pusatTab==='wilayah')+'">Toko Wilayah</button><button data-pt="backup" aria-pressed="'+(pusatTab==='backup')+'">Backup</button></div><div id="pbody"></div>';
   $app.querySelectorAll('[data-pt]').forEach(b => b.onclick = () => { pusatTab = b.dataset.pt; pusatPage(); });
   const body = document.getElementById('pbody');
-  pusatTab==='master' ? masterView(body) : pusatTab==='upload' ? uploadView(body) : backupView(body);
+  pusatTab==='master' ? masterView(body) : pusatTab==='wilayah' ? wilayahView(body) : pusatTab==='upload' ? uploadView(body) : backupView(body);
 }
 function nextVisits(hari, grup, n=2){
   const out = [], d = new Date(); d.setHours(12,0,0,0);
@@ -1069,6 +1195,7 @@ function route(){
     askPw().then(ok => { if (ok) { pusatOk = true; pusatPage(); window.scrollTo(0,0); } else if (location.hash==='#pusat-data') location.hash = ''; });
     return;
   }
+  if (w==='master-toko') return masterToko(ks);
   if (w==='padang') return ks ? detail(ks) : kecList();
   const nm = WILAYAH.find(x=>slug(x)===w); if (!nm) return home();
   if (!ks) return hariList(nm);
@@ -1115,6 +1242,7 @@ initFirebase().then(async () => {
   } catch(e){}
   if (baru) { const ae = document.activeElement; if (!(ae && ae.closest && ae.closest('tbody'))) route(); }
   await segarkanConfig();
+  mtMuat().then(() => { if (!location.hash.replace('#','')) route(); });
   migrasiSemuaKeTagihan();
 });
 
