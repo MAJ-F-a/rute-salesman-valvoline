@@ -1057,19 +1057,19 @@ async function hapusDataToko(semua){
     MTOKO = kosongMt(); await mtSimpan();
     alert('Selesai. Semua data toko dan data tagihan sudah dihapus.'); pusatPage(); return;
   }
-  /* Hapus kecuali tagihan: yang tinggal hanya toko berstatus Ada tagihan */
-  const keep = new Set((TAGIHAN.toko||[]).map(t => t.kode));
+  /* Hapus kecuali tagihan: Data Master (Ada tagihan dan Tidak ada tagihan) dan semua Toko pernah order tetap. Yang dihapus hanya toko di Master Toko yang tidak terkait Data Master / tagihan. */
+  const keep = new Set([...(TAGIHAN.toko||[]).map(t => t.kode), ...Object.keys(TAGIHAN.lunas||{})]);
   const T = {}; let sisaPdg = 0;
-  KEC.forEach(k => { T[k[0]] = (TOKO[k[0]]||[]).filter(x => x[4]); sisaPdg += T[k[0]].length; T[k[0]].forEach(x => { if (x[0]) keep.add(x[0]); }); });
+  KEC.forEach(k => { T[k[0]] = (TOKO[k[0]]||[]).slice(); sisaPdg += T[k[0]].length; T[k[0]].forEach(x => { if (x[0]) keep.add(x[0]); }); });
   const M = kosongMt(); let sisaMt = 0;
   MT_JENIS.forEach(j => { M[j[0]] = MTOKO[j[0]].filter(t => keep.has(t.id)); sisaMt += M[j[0]].length; });
-  M['pernah-order'] = (MTOKO['pernah-order']||[]).filter(t => keep.has(t.id) || (t.po && (T[t.po.kec]||[]).some(x => x[1]===t.po.nama))); sisaMt += M['pernah-order'].length;
+  M['pernah-order'] = (MTOKO['pernah-order']||[]).slice(); sisaMt += M['pernah-order'].length;
   const sel = {}; Object.keys(TAGIHAN.sel||{}).forEach(k => { if (keep.has(k)) sel[k] = TAGIHAN.sel[k]; });
-  if (!confirm('Hapus semua data toko KECUALI toko yang Ada tagihan?\n\n• Data Master Padang: '+(nPdg-sisaPdg)+' toko dihapus, '+sisaPdg+' toko Ada tagihan tetap\n• Master Toko: '+(nMt-sisaMt)+' toko dihapus, '+sisaMt+' toko Ada tagihan tetap\n• Toko Tidak ada tagihan luar kota: '+nLunas+' toko dihapus\n• Toko Ada tagihan luar kota: '+nTag+' toko tetap\n\nTidak bisa dibatalkan. Pastikan Backup sudah diunduh.')) return;
+  if (!confirm('Hapus data Master Toko KECUALI yang terkait Data Master / tagihan?\n\n• Data Master Padang (Ada tagihan dan Tidak ada tagihan): '+sisaPdg+' toko tetap\n• Toko luar kota Ada tagihan: '+nTag+' tetap, Tidak ada tagihan: '+nLunas+' tetap\n• Toko pernah order: '+(MTOKO['pernah-order']||[]).length+' toko tetap\n• Master Toko lainnya (Retail, Semi Grosir, Grosir, Belum Diisi): '+(nMt-sisaMt)+' toko dihapus, '+sisaMt+' toko tetap\n\nTidak bisa dibatalkan. Pastikan Backup sudah diunduh.')) return;
   TOKO = T; simpanMaster();
-  setTagihan({...TAGIHAN, lunas:{}, sel});
+  setTagihan({...TAGIHAN, sel});
   MTOKO = M; await mtSimpan();
-  alert('Selesai. Semua data toko dihapus, kecuali toko yang Ada tagihan.'); pusatPage();
+  alert('Selesai. Data Master (Ada tagihan dan Tidak ada tagihan) dan Toko pernah order tetap utuh.'); pusatPage();
 }
 function pusatPage(){
   $app.innerHTML = '<a class="back" href="#">‹ Semua wilayah</a><h2>Pusat Data</h2><div class="bar"><button type="button" class="act red" id="hpall">🗑 Hapus semua</button><button type="button" class="act red" id="hpkec">🗑 Hapus kecuali tagihan</button></div><div class="tabs">' +
