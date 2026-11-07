@@ -471,6 +471,7 @@ function masterToko(js, sub){
   const hs = '#master-toko/'+js+(ms ? '/'+sub : '');
   mtQ = '';
   const merah = s => '<span style="color:#b42318;font-weight:700">'+s+'</span>';
+  let lim = 50;
   const idHtml = t => /^TANPA-KODE-\d+$/.test(t.id) ? merah('belum ada kode')+(t.kodeAsli ? '<br><small>(kode ganda: '+esc(t.kodeAsli)+')</small>' : '') : (mtKodeBad(t) ? esc(t.id)+'<br>'+merah('<small>kode tidak valid</small>') : esc(t.id));
   const render = () => {
     const sem = mtSemua(), bl = sem.filter(t => mtMasalah(t).length);
@@ -481,11 +482,13 @@ function masterToko(js, sub){
       return;
     }
     const list = (belum ? bl.filter(t => mtMenu(t)===sub) : sem.filter(t => (all || t.js===js) && !mtMasalah(t).length)).sort((a,b) => String(a.nama||'').localeCompare(String(b.nama||''))), nB = belum ? 0 : list.filter(t => !t.izin).length;
+    const cari = () => { const v = mtQ.trim().toLowerCase(); return v ? list.filter(t => ((t.nama||'')+' '+t.id+' '+(t.kodeAsli||'')).toLowerCase().includes(v)) : list; };
+    const barisHtml = arr => arr.map((t,i) => '<tr data-s="'+esc(((t.nama||'')+' '+t.id+' '+(t.kodeAsli||'')).toLowerCase())+'"><td>'+(i+1)+'</td><td class="l">'+idHtml(t)+'</td><td class="l">'+(t.nama ? esc(t.nama) : merah('belum diisi'))+'</td><td>'+(t.lat!=null && t.lat!=='' ? esc(t.lat) : '-')+'</td><td>'+(t.lon!=null && t.lon!=='' ? esc(t.lon) : '-')+'</td><td>'+(t.kec ? esc(t.kec) : (mtPre(t.id)==='PDG' ? merah('belum diisi') : '-'))+'</td><td>'+mtMaps(t)+'</td>'+(wide ? '<td>'+(t.js==='tidak-terdaftar' ? merah('belum dipilih') : esc(t.kat))+'</td>' : '')+'<td>'+(belum ? merah(MT_MSL.filter(m => mtMasalah(t).includes(m[0])).map(m => m[3]).join(', ')) : (t.izin ? '✓ Diizinkan' : '<button type="button" class="mini" data-iz="'+esc(t.id)+'">Izinkan</button>'))+'</td><td><button type="button" class="mini" data-ed="'+esc(t.id)+'">✎ Edit</button></td>'+(wide ? '<td><button type="button" class="mini del" data-x="'+esc(t.id)+'" aria-label="Hapus toko">×</button></td>' : '')+'</tr>').join('');
     $app.innerHTML = '<a class="back" href="'+(belum ? '#master-toko/tidak-terdaftar' : '#master-toko')+'">‹ '+(belum ? esc(jn[1]) : 'Master toko')+'</a><h2>'+esc(belum ? ms[1] : (all ? 'All toko' : jn[1]))+'</h2><p class="sub">'+
       (belum ? list.length+' toko. '+esc(ms[2])+'. Klik Edit untuk melengkapi; kalau semua datanya sudah lengkap, toko pindah sendiri ke kategorinya.' : list.length+' toko, '+nB+' belum diizinkan.'+(bl.length ? ' Ada <a href="#master-toko/tidak-terdaftar">'+bl.length+' toko yang datanya belum lengkap</a> (tidak ditampilkan di sini).' : '')+' Toko baru masuk Pusat Data setelah diizinkan.')+'</p>' +
       (nB ? '<div class="bar"><button class="act pri" id="izall">✓ Izinkan semua ('+nB+')</button></div>' : '') +
       (list.length ? '<input id="mtq" type="search" placeholder="Cari nama toko atau ID toko…" value="'+esc(mtQ)+'" autocomplete="off" style="width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:6px;margin:4px 0 6px"><p class="sub" id="mtqn" style="margin-bottom:8px"></p><div class="scroll pd"><table style="min-width:'+(belum ? 1150 : all ? 1000 : 880)+'px"><caption>'+esc(belum ? ms[1] : (all ? 'All toko' : jn[1]))+'</caption><thead><tr><th style="width:48px">No.</th><th style="width:150px">ID toko</th><th>Nama toko</th><th style="width:90px">Latitude</th><th style="width:90px">Longitude</th><th style="width:120px">Kecamatan</th><th style="width:170px">Peta</th>'+(wide ? '<th style="width:100px">Kategori</th>' : '')+'<th style="width:'+(belum ? 150 : 110)+'px">'+(belum ? 'Yang kurang' : 'Izin')+'</th><th style="width:80px">Edit</th>'+(wide ? '<th style="width:50px">X</th>' : '')+'</tr></thead><tbody>' +
-        list.map((t,i) => '<tr data-s="'+esc(((t.nama||'')+' '+t.id+' '+(t.kodeAsli||'')).toLowerCase())+'"><td>'+(i+1)+'</td><td class="l">'+idHtml(t)+'</td><td class="l">'+(t.nama ? esc(t.nama) : merah('belum diisi'))+'</td><td>'+(t.lat!=null && t.lat!=='' ? esc(t.lat) : '-')+'</td><td>'+(t.lon!=null && t.lon!=='' ? esc(t.lon) : '-')+'</td><td>'+(t.kec ? esc(t.kec) : (mtPre(t.id)==='PDG' ? merah('belum diisi') : '-'))+'</td><td>'+mtMaps(t)+'</td>'+(wide ? '<td>'+(t.js==='tidak-terdaftar' ? merah('belum dipilih') : esc(t.kat))+'</td>' : '')+'<td>'+(belum ? merah(MT_MSL.filter(m => mtMasalah(t).includes(m[0])).map(m => m[3]).join(', ')) : (t.izin ? '✓ Diizinkan' : '<button type="button" class="mini" data-iz="'+esc(t.id)+'">Izinkan</button>'))+'</td><td><button type="button" class="mini" data-ed="'+esc(t.id)+'">✎ Edit</button></td>'+(wide ? '<td><button type="button" class="mini del" data-x="'+esc(t.id)+'" aria-label="Hapus toko">×</button></td>' : '')+'</tr>').join('') + '</tbody></table></div>' : '<p class="empty">'+(belum ? 'Tidak ada toko di menu ini.' : 'Belum ada toko. Upload Excel di halaman Master toko.')+'</p>');
+        '' + '</tbody></table></div><div class="bar"><button type="button" class="act" id="mtmore" hidden></button></div>' : '<p class="empty">'+(belum ? 'Tidak ada toko di menu ini.' : 'Belum ada toko. Upload Excel di halaman Master toko.')+'</p>');
     const tandai = async ids => {
       if (!(await mtPw())) return; await mtMuat();
       const sem2 = mtSemua().filter(t => ids.includes(t.id)), blok = sem2.filter(t => mtMasalah(t).length);
@@ -493,17 +496,28 @@ function masterToko(js, sub){
       await mtSimpan(); render();
       if (blok.length) alert(blok.length+' toko belum diizinkan karena datanya belum lengkap'+(blok.length<=5 ? ':\n'+blok.map(t => (t.nama||t.id)+' - kurang: '+MT_MSL.filter(m => mtMasalah(t).includes(m[0])).map(m => m[3]).join(', ')).join('\n') : '')+'\n\nToko itu ada di menu Kategori Toko Belum Diisi. Klik Edit untuk melengkapi, lalu izinkan lagi.');
     };
-    $app.querySelectorAll('[data-ed]').forEach(b => b.onclick = async () => { if (!(await mtPw())) return; mtEdit(b.dataset.ed, () => render()); });
-    $app.querySelectorAll('[data-iz]').forEach(b => b.onclick = () => tandai([b.dataset.iz]));
+    const klikBaris = async e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.ed) { if (!(await mtPw())) return; mtEdit(b.dataset.ed, () => render()); } else if (b.dataset.iz) tandai([b.dataset.iz]); else if (b.dataset.x) delX(b); };
     $app.querySelectorAll('.scroll.pd').forEach(scrollAtas);
     const q = document.getElementById('mtq');
-    if (q) { const sar = () => { mtQ = q.value; const v = q.value.trim().toLowerCase(); let n = 0; $app.querySelectorAll('tbody tr').forEach(tr => { const ok = !v || tr.dataset.s.includes(v); tr.hidden = !ok; if (ok) tr.cells[0].textContent = ++n; }); document.getElementById('mtqn').textContent = v ? n+' toko cocok' : ''; }; q.oninput = sar; sar(); }
+    if (q) {
+      const isi = () => {
+        const f = cari(), tb = $app.querySelector('tbody'), n = document.getElementById('mtqn'), mb = document.getElementById('mtmore'), v = mtQ.trim();
+        if (!tb) return;
+        tb.innerHTML = barisHtml(f.slice(0, lim));
+        if (n) n.textContent = f.length > lim ? 'Menampilkan '+lim+' dari '+f.length+' toko'+(v ? ' yang cocok' : '') : (v ? f.length+' toko cocok' : '');
+        if (mb) { mb.hidden = f.length <= lim; mb.textContent = 'Tampilkan lagi (+'+Math.min(50, f.length-lim)+')'; }
+      };
+      const tbl = $app.querySelector('tbody'); if (tbl) tbl.onclick = klikBaris;
+      q.oninput = () => { mtQ = q.value; lim = 50; isi(); };
+      const mb0 = document.getElementById('mtmore'); if (mb0) mb0.onclick = () => { lim += 50; isi(); };
+      isi();
+    }
     const ia = document.getElementById('izall'); if (ia) ia.onclick = () => tandai(list.filter(t => !t.izin).map(t => t.id));
-    $app.querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
+    const delX = async b => {
       const t = mtSemua().find(x => x.id===b.dataset.x); if (!t || !(await mtPw())) return;
       if (!confirm('Hapus "'+(t.nama||t.id)+'" ('+(/^TANPA-KODE-\d+$/.test(t.id) ? 'tanpa kode' : t.id)+')?\n\nToko juga hilang dari Pusat Data dan rute salesman.')) return;
       await mtMuat(); mtKeluarWajib(t); MTOKO[t.js] = MTOKO[t.js].filter(x => x.id!==t.id); await mtSimpan(); render();
-    });
+    };
   };
   render();
   mtMuat().then(() => { if (location.hash===hs && document.activeElement.id!=='mtq' && !document.activeElement.closest('button')) render(); });
@@ -1250,8 +1264,30 @@ function masterView(body){
     tr.querySelectorAll('input.lli').forEach(i => { i.style.borderColor = '#1f7a4d'; setTimeout(() => { i.style.borderColor = ''; }, 1200); });
     tr.querySelector('td.pt').innerHTML = petaHtml(LA, LN);
   }; });
-  document.getElementById('ms').oninput = e => { const v = e.target.value.trim().toLowerCase();
-    body.querySelectorAll('tbody tr').forEach(tr => { tr.hidden = tr.classList.contains('grp') ? !!v : (!!v && !(tr.dataset.s||'').includes(v)); }); };
+  const msIn = document.getElementById('ms');
+  const kotak = [...body.querySelectorAll('.scroll.pd')].map(box => {
+    const bar = document.createElement('div'); bar.className = 'bar';
+    bar.innerHTML = '<span class="sub"></span><button type="button" class="act" hidden></button>';
+    box.parentNode.insertBefore(bar, box.nextSibling);
+    return {box, lim:50, info:bar.firstChild, btn:bar.lastChild};
+  });
+  const tampil = () => {
+    const v = msIn.value.trim().toLowerCase();
+    kotak.forEach(B => {
+      let grp = null, cocok = 0;
+      B.box.querySelectorAll('tbody tr').forEach(tr => {
+        if (tr.classList.contains('grp')) { grp = tr; tr.hidden = true; return; }
+        if (!tr.dataset.s && tr.querySelector('.empty')) { tr.hidden = !!v; return; }
+        if (!v || (tr.dataset.s||'').includes(v)) { cocok++; if (cocok <= B.lim) { tr.hidden = false; if (grp) grp.hidden = false; } else tr.hidden = true; }
+        else tr.hidden = true;
+      });
+      B.info.textContent = cocok > B.lim ? 'Menampilkan '+B.lim+' dari '+cocok+' toko'+(v ? ' yang cocok' : '') : (v ? cocok+' toko cocok' : '');
+      B.btn.hidden = cocok <= B.lim; B.btn.textContent = 'Tampilkan lagi (+'+Math.min(50, cocok-B.lim)+')';
+    });
+  };
+  msIn.oninput = () => { kotak.forEach(B => { B.lim = 50; }); tampil(); };
+  kotak.forEach(B => { B.btn.onclick = () => { B.lim += 50; tampil(); }; });
+  tampil();
   document.getElementById('mdl').onclick = () => unduhMaster().catch(()=>alert('Gagal memuat pustaka Excel. Cek koneksi internet.'));
   const f = document.getElementById('mf');
   document.getElementById('mup').onclick = () => f.click();
